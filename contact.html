@@ -21,6 +21,17 @@
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <link rel="icon" href="./images/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+<script>
+(function (h) {
+  h.classList.add("js");
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  h.classList.add("pre-intro");
+  try {
+    if (sessionStorage.getItem("nfc-t") === "1") { h.classList.add("is-entering"); sessionStorage.removeItem("nfc-t"); }
+    else if (!sessionStorage.getItem("nfc-seen")) { h.classList.add("has-loader"); }
+  } catch (e) {}
+})(document.documentElement);
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&amp;family=Fraunces:opsz,wght,SOFT@9..144,300..500,0..100&amp;display=swap">
@@ -28,6 +39,10 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<div class="loader" aria-hidden="true">
+  <div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div>
+</div>
+<div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="./index.html" aria-label="Noosa Food &amp; Coffee Co, home">
@@ -35,7 +50,7 @@
     </a>
     <nav class="nav" aria-label="Main">
       <a href="./index.html">Home</a><a href="./coffee.html">Coffee</a><a href="./honey.html">Honey</a><a href="./contact.html" aria-current="page">Contact</a>
-      <a class="btn btn--light-line" href="./contact.html">Enquire</a>
+      <a class="btn btn--light-line btn--sm" href="./contact.html"><span>Enquire</span></a>
     </nav>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
       <span class="menu-toggle__label">Menu</span><span class="menu-toggle__icon" aria-hidden="true"></span>
@@ -47,7 +62,7 @@
     <ul><li><a href="./index.html">Home</a></li><li><a href="./coffee.html">Coffee</a></li><li><a href="./honey.html">Honey</a></li><li><a href="./contact.html" aria-current="page">Contact</a></li></ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--light" href="./contact.html">Send an enquiry <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+    <a class="btn btn--light" href="./contact.html"><span>Send an enquiry</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
     <p>Noosa Heads, Queensland, Australia</p>
   </div>
 </div>
@@ -56,23 +71,23 @@
   <section class="contact" aria-labelledby="page-title">
     <div class="wrap contact__grid">
       <div class="contact__aside">
-        <h1 class="h1 reveal" id="page-title">Get in touch</h1>
-        <p class="lede reveal" data-delay="1">Questions, orders or bulk enquiries, send us a message and we&rsquo;ll get back to you.</p>
-        <div class="contact__place reveal" data-delay="2">
+        <h1 class="h1" id="page-title" data-intro data-lines><span class="ln"><span class="ln__in">Get in touch</span></span></h1>
+        <p class="lede" data-intro data-fade>Questions, orders or bulk enquiries, send us a message and we&rsquo;ll get back to you.</p>
+        <div class="contact__place" data-intro data-fade>
           <span>Location</span>
           <strong>Noosa Heads, Queensland, Australia</strong>
         </div>
-        <img class="reveal" data-delay="2" src="./images/eucalyptus.webp" alt="Sprigs of round eucalyptus leaves against a pale background" width="1200" height="800" loading="lazy" decoding="async">
+        <div class="frame frame--contact" data-veil><img src="./images/eucalyptus.webp" alt="Sprigs of round eucalyptus leaves against a pale background" width="1200" height="800" loading="lazy" decoding="async"></div>
       </div>
 
-      <div>
+      <div data-intro data-fade>
         <!--
           FORMSPREE: the form ID must be added before the site goes live.
           Create a form at https://formspree.io, then replace REPLACE_ME below with the form ID
           (e.g. https://formspree.io/f/abcdwxyz). Until then the form shows the thank-you
           message but no enquiry is sent.
         -->
-        <form class="form reveal" id="enquiry-form" action="https://formspree.io/f/REPLACE_ME" method="POST" novalidate>
+        <form class="form" id="enquiry-form" action="https://formspree.io/f/REPLACE_ME" method="POST" novalidate>
           <input type="hidden" name="_subject" value="New enquiry from the Noosa Food &amp; Coffee Co website">
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
           <div class="form__row form__row--2">
@@ -100,6 +115,10 @@
                 <option>Green coffee beans</option>
                 <option>Raw honey</option>
                 <option>Honeycomb</option>
+                <option>Vanilla beans</option>
+                <option>Finger limes</option>
+                <option>Dried lime slices</option>
+                <option>Fresh herbs</option>
                 <option>Bulk / café order</option>
                 <option>Other</option>
               </select>
@@ -118,7 +137,7 @@
             <span class="field__error">Please add a short message.</span>
           </div>
           <div class="form__foot">
-            <button class="btn" type="submit">Send enquiry <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <button class="btn btn--lg" type="submit"><span>Send enquiry</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
             <p class="form__status" role="status" aria-live="polite"></p>
           </div>
         </form>
@@ -161,5 +180,9 @@
 </footer>
 <script src="./js/products.js"></script>
 <script src="./js/main.js"></script>
+<script src="./js/vendor/gsap.min.js" defer></script>
+<script src="./js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="./js/vendor/lenis.min.js" defer></script>
+<script src="./js/motion.js" defer></script>
 </body>
 </html>

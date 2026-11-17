@@ -5,14 +5,61 @@ Shared head, header, call to action and footer live here once, so every
 page stays consistent. Run from anywhere:  python3 _build/build.py
 Output goes to the repo root (index.html, coffee.html, honey.html, contact.html).
 All links and asset paths are relative so the site works on GitHub Pages.
+
+Motion hooks used by js/motion.js (content stays visible without JS):
+  data-intro      first-screen element, hidden only while the intro plays
+  data-lines      heading made of .ln > .ln__in lines that rise into place
+  data-fade       fades and lifts in on scroll
+  data-veil       image frame revealed by a sliding veil
+  data-parallax   element drifts at its own speed while scrolling
+  data-drips      honey drips that lengthen as the section arrives
+  data-draw       inline SVG whose strokes draw themselves
+  data-rise       size silhouettes that rise from their baseline
+  data-stagger    children fade in one after another
+  data-pop        small element that scales into place
 """
+import random
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://welcometothenextlevel.github.io/noosafoodandcoffeeco/"
 ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
-
+CUR = ' aria-current="page"'
 NAV = [("index.html", "Home"), ("coffee.html", "Coffee"), ("honey.html", "Honey"), ("contact.html", "Contact")]
+
+
+def lines(*parts, tag="h2", cls="h2", id_="", intro=False):
+    """Heading split into fixed lines so each can rise from behind a mask."""
+    inner = " ".join(f'<span class="ln"><span class="ln__in">{p}</span></span>' for p in parts)
+    attrs = f' id="{id_}"' if id_ else ""
+    attrs += " data-intro" if intro else ""
+    return f'<{tag} class="{cls}"{attrs} data-lines>{inner}</{tag}>'
+
+
+def drips(seed, count=14, max_len=120, band=True):
+    """Honey drips hanging from a band. Positions are fixed at build time."""
+    rnd = random.Random(seed)
+    out = []
+    xs = sorted(rnd.uniform(2, 98) for _ in range(count))
+    for x in xs:
+        w = rnd.uniform(10, 22)
+        h = rnd.uniform(18, max_len)
+        drop = rnd.random() < 0.35
+        out.append(
+            f'<span class="drip" style="left:{x:.1f}%;--w:{w:.0f}px;--h:{h:.0f}px">'
+            + ('<i class="drip__drop"></i>' if drop else "")
+            + "</span>"
+        )
+    b = '<span class="drips__band"></span>' if band else ""
+    return '<div class="drips" aria-hidden="true" data-drips>' + b + "".join(out) + "</div>"
+
+
+SPRIG = (ROOT / "images" / "sprig.svg").read_text()
+import re as _re
+_d = _re.search(r' d="([^"]+)"', SPRIG).group(1)
+_parts = [p for p in _re.split(r"(?=M)", _d) if p.strip()]
+SPRIG_INLINE = _re.sub(r'<path d="[^"]+"/>', "".join(f'<path d="{p}"/>' for p in _parts), SPRIG, count=1)
+SPRIG_INLINE = SPRIG_INLINE.replace("<svg ", '<svg class="cta__sprig" aria-hidden="true" focusable="false" data-draw ', 1)
 
 
 def head(title, desc, page):
@@ -40,6 +87,17 @@ def head(title, desc, page):
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <link rel="icon" href="./images/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+<script>
+(function (h) {{
+  h.classList.add("js");
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  h.classList.add("pre-intro");
+  try {{
+    if (sessionStorage.getItem("nfc-t") === "1") {{ h.classList.add("is-entering"); sessionStorage.removeItem("nfc-t"); }}
+    else if (!sessionStorage.getItem("nfc-seen")) {{ h.classList.add("has-loader"); }}
+  }} catch (e) {{}}
+}})(document.documentElement);
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&amp;family=Fraunces:opsz,wght,SOFT@9..144,300..500,0..100&amp;display=swap">
@@ -48,18 +106,15 @@ def head(title, desc, page):
 """
 
 
-CUR = ' aria-current="page"'
-
-
 def header(page):
-    links = "".join(
-        f'<a href="./{href}"{CUR if href == page else ""}>{label}</a>' for href, label in NAV
-    )
-    mlinks = "".join(
-        f'<li><a href="./{href}"{CUR if href == page else ""}>{label}</a></li>' for href, label in NAV
-    )
+    links = "".join(f'<a href="./{href}"{CUR if href == page else ""}>{label}</a>' for href, label in NAV)
+    mlinks = "".join(f'<li><a href="./{href}"{CUR if href == page else ""}>{label}</a></li>' for href, label in NAV)
     return f"""<body>
 <a class="skip" href="#main">Skip to content</a>
+<div class="loader" aria-hidden="true">
+  <div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div>
+</div>
+<div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="./index.html" aria-label="Noosa Food &amp; Coffee Co, home">
@@ -67,7 +122,7 @@ def header(page):
     </a>
     <nav class="nav" aria-label="Main">
       {links}
-      <a class="btn btn--light-line" href="./contact.html">Enquire</a>
+      <a class="btn btn--light-line btn--sm" href="./contact.html"><span>Enquire</span></a>
     </nav>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
       <span class="menu-toggle__label">Menu</span><span class="menu-toggle__icon" aria-hidden="true"></span>
@@ -79,7 +134,7 @@ def header(page):
     <ul>{mlinks}</ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--light" href="./contact.html">Send an enquiry {ARROW}</a>
+    <a class="btn btn--light" href="./contact.html"><span>Send an enquiry</span> {ARROW}</a>
     <p>Noosa Heads, Queensland, Australia</p>
   </div>
 </div>
@@ -88,14 +143,14 @@ def header(page):
 
 CTA = f"""
 <section class="cta section" aria-labelledby="cta-title">
-  <img class="cta__sprig" src="./images/sprig.svg" alt="" width="420" height="300" loading="lazy">
+  {SPRIG_INLINE}
   <div class="wrap cta__grid">
-    <div class="reveal">
-      <h2 class="h2" id="cta-title">Tell us what you&rsquo;re after.</h2>
-      <p style="margin-top:18px">Questions, orders or bulk enquiries. Send us a message and we&rsquo;ll get back to you.</p>
+    <div>
+      {lines("Tell us what", "you&rsquo;re after.", id_="cta-title", cls="h2 h2--xl")}
+      <p class="cta__text" data-fade>Questions, orders or bulk enquiries. Send us a message and we&rsquo;ll get back to you.</p>
     </div>
-    <div class="reveal" data-delay="1">
-      <a class="btn" href="./contact.html">Send an enquiry {ARROW}</a>
+    <div data-fade>
+      <a class="btn btn--lg" href="./contact.html"><span>Send an enquiry</span> {ARROW}</a>
     </div>
   </div>
 </section>
@@ -132,6 +187,10 @@ def footer():
 </footer>
 <script src="./js/products.js"></script>
 <script src="./js/main.js"></script>
+<script src="./js/vendor/gsap.min.js" defer></script>
+<script src="./js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="./js/vendor/lenis.min.js" defer></script>
+<script src="./js/motion.js" defer></script>
 </body>
 </html>
 """
@@ -189,79 +248,107 @@ def size(sym, h, ratio, weight, note):
             f'<p class="size__w">{weight}</p><p class="size__t">{note}</p></li>')
 
 
+NO_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.5"/></svg>'
+HEX_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z" fill="currentColor"/></svg>'
+
+COFFEE_ALT = "Noosa Coffee Co single origin roasted Arabica coffee beans in a 1kg and a 250g bag, with eucalyptus leaves and roasted beans on a sand backdrop"
+HONEY_ALT = "Noosa Tropical Farm raw honey in two 500g jars and a tub with yellow lids, on grey stone"
+
 INDEX = f"""
 <main id="main">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__grid">
+  <section class="hero on-dark" aria-labelledby="hero-title">
+    <div class="hero__inner wrap">
       <div class="hero__text">
-        <h1 class="h1 reveal" id="hero-title"><span>Roasted in Noosa.</span> <span>Raw honey from Noosa.</span></h1>
-        <p class="lede reveal" data-delay="1">Single origin Arabica and blends from Noosa Coffee Co, roasted in Noosa. Pure raw honey and honeycomb from Noosa Tropical Farm, with nothing added.</p>
-        <div class="actions reveal" data-delay="2">
-          <a class="btn" href="./coffee.html">Our Coffee {ARROW}</a>
-          <a class="btn btn--line" href="./honey.html">Our Honey</a>
+        {lines("Roasted in Noosa.", "Raw honey", "from Noosa.", tag="h1", cls="h1 h1--hero", id_="hero-title", intro=True)}
+        <div class="hero__foot">
+          <p class="lede" data-intro data-fade>Single origin Arabica and blends from Noosa Coffee Co, roasted in Noosa. Pure raw honey and honeycomb from Noosa Tropical Farm, with nothing added.</p>
+          <div class="actions" data-intro data-fade>
+            <a class="btn btn--light" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
+            <a class="btn btn--light-line" href="./honey.html"><span>Our Honey</span></a>
+          </div>
         </div>
-        <ul class="hero__index reveal" data-delay="3" aria-label="Products">
-          <li><a href="./coffee.html#roasted">Roasted coffee</a></li>
-          <li><a href="./coffee.html#green">Green coffee beans</a></li>
-          <li><a href="./honey.html#raw-honey">Raw honey</a></li>
-          <li><a href="./honey.html#honeycomb">Honeycomb</a></li>
+      </div>
+      <div class="hero__art">
+        <figure class="hero__card hero__card--coffee" data-intro data-parallax="-.08">
+          <div class="frame" data-veil><img src="./images/coffee-bags.webp" alt="{COFFEE_ALT}" width="683" height="738" fetchpriority="high"></div>
+          <figcaption>Noosa Coffee Co. Single origin roasted Arabica, 1kg and 250g.</figcaption>
+        </figure>
+        <figure class="hero__card hero__card--honey" data-intro data-parallax="-.22">
+          <div class="frame" data-veil><img src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024"></div>
+          <figcaption>Noosa Tropical Farm raw honey.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <a class="scroll-cue" href="#coffee-title" data-intro data-fade><span>Scroll</span><i aria-hidden="true"></i></a>
+  </section>
+
+  <section class="chapter chapter--coffee" aria-labelledby="coffee-title">
+    <div class="wrap chapter__grid">
+      <div class="chapter__media">
+        <div class="frame frame--tall" data-veil><img class="parallax-img" src="./images/roasting.webp" alt="Freshly roasted coffee beans being stirred with a metal scoop in a roaster" width="1600" height="1067" loading="lazy" decoding="async"></div>
+        <img class="chapter__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350" loading="lazy" data-pop>
+      </div>
+      <div class="chapter__body">
+        <p class="label" data-fade>Noosa Coffee Co</p>
+        {lines("Our coffee", id_="coffee-title", cls="h2 h2--xl")}
+        <p data-fade>Single origin roasted Arabica and blends, roasted in Noosa and packed in 250g, 500g and 1kg bags.</p>
+        <p data-fade>Green coffee beans too, from Brazil, Vietnam, Colombia, Papua New Guinea and India.</p>
+        <p data-fade><a class="link" href="./coffee.html">See the coffee {ARROW}</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter chapter--honey on-dark" aria-labelledby="honey-title">
+    {drips(11)}
+    <div class="wrap chapter__grid">
+      <div class="chapter__body">
+        <p class="label" data-fade>Noosa Tropical Farm</p>
+        {lines("Our honey", id_="honey-title", cls="h2 h2--xl")}
+        <p data-fade>Pure raw honey in 500g, 1kg, 3kg and 30kg. And honeycomb, packed in 250g tubs.</p>
+        <ul class="nothing" data-stagger>
+          <li>{NO_ICON}No preservatives</li>
+          <li>{NO_ICON}No colourings</li>
+          <li>{NO_ICON}No additives</li>
         </ul>
+        <p data-fade><a class="link link--honey" href="./honey.html">See the honey {ARROW}</a></p>
       </div>
-      <figure class="hero__media">
-        <img src="./images/coffee-bags.webp" alt="Noosa Coffee Co single origin roasted Arabica coffee beans in a 1kg and a 250g bag, with eucalyptus leaves and roasted beans on a sand backdrop" width="683" height="738" fetchpriority="high">
-      </figure>
-    </div>
-  </section>
-
-  <div class="botanical strip" aria-hidden="true"></div>
-
-  <section class="panel panel--coffee section" aria-labelledby="coffee-title">
-    <div class="wrap panel__grid">
-      <div class="panel__media reveal">
-        <img class="panel__photo" src="./images/roasting.webp" alt="Freshly roasted coffee beans being stirred with a metal scoop in a roaster" width="1600" height="1067" loading="lazy" decoding="async">
-        <img class="panel__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350" loading="lazy">
-      </div>
-      <div class="panel__body reveal" data-delay="1">
-        <p class="label">Noosa Coffee Co</p>
-        <h2 class="h2" id="coffee-title">Our coffee</h2>
-        <p>Single origin roasted Arabica and blends, roasted in Noosa and packed in 250g, 500g and 1kg bags.</p>
-        <p>Green coffee beans too, from Brazil, Vietnam, Colombia, Papua New Guinea and India.</p>
-        <p><a class="link" href="./coffee.html">See the coffee {ARROW}</a></p>
+      <div class="chapter__media chapter__media--honey">
+        <span class="lid" aria-hidden="true" data-pop></span>
+        <div class="frame frame--honey" data-veil><img src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024" loading="lazy" decoding="async"></div>
+        <div class="inset" data-parallax="-.18"><div class="frame" data-veil><img src="./images/honeycomb.webp" alt="Golden honeycomb on a wooden board" width="683" height="670" loading="lazy" decoding="async"></div></div>
       </div>
     </div>
   </section>
 
-  <section class="panel panel--honey section on-dark" aria-labelledby="honey-title">
-    <div class="wrap panel__grid">
-      <div class="panel__media reveal">
-        <span class="lid" aria-hidden="true"></span>
-        <img class="panel__photo" src="./images/honey.webp" alt="Noosa Tropical Farm raw honey in two 500g jars and a tub with yellow lids, on grey stone" width="683" height="1024" loading="lazy" decoding="async">
-        <div class="inset"><img src="./images/honeycomb.webp" alt="Golden honeycomb on a wooden board" width="683" height="670" loading="lazy" decoding="async"></div>
+  <section class="pantry section" id="pantry" aria-labelledby="pantry-title">
+    <div class="wrap">
+      <div class="pantry__head">
+        <div>
+          <p class="label" data-fade>Noosa Food &amp; Coffee Co</p>
+          {lines("Beyond coffee", "and honey", id_="pantry-title", cls="h2 h2--xl")}
+        </div>
+        <p class="lede" data-fade>Vanilla beans, finger limes, dried lime slices and fresh herbs. Ask us what&rsquo;s available and in what quantities.</p>
       </div>
-      <div class="panel__body reveal" data-delay="1">
-        <p class="label">Noosa Tropical Farm</p>
-        <h2 class="h2" id="honey-title">Our honey</h2>
-        <p>Pure raw honey with no preservatives, colourings or additives, in 500g, 1kg, 3kg and 30kg.</p>
-        <p>And honeycomb, packed in 250g tubs.</p>
-        <p><a class="link" href="./honey.html">See the honey {ARROW}</a></p>
+      <div class="pantry__grid" data-products="vanilla-beans,finger-limes,dried-lime,herbs" data-variant="tile">
+        <noscript><p>Vanilla beans, finger limes, dried lime slices and fresh herbs. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
       </div>
     </div>
   </section>
 
   <figure class="place">
-    <img src="./images/noosa-headland.webp" alt="Noosa Heads coastline with the headland, beach and clear water on a sunny day" width="1600" height="1082" loading="lazy" decoding="async">
-    <figcaption class="place__note reveal"><strong>Noosa Heads, Queensland</strong>Home of Noosa Food &amp; Coffee Co, where our coffee is roasted.</figcaption>
+    <div class="place__frame"><img class="place__img" src="./images/noosa-headland.webp" alt="Noosa Heads coastline with the headland, beach and clear water on a sunny day" width="1600" height="1082" loading="lazy" decoding="async"></div>
+    <figcaption class="place__note" data-fade><strong>Noosa Heads, Queensland</strong>Home of Noosa Food &amp; Coffee Co, where our coffee is roasted.</figcaption>
   </figure>
 
   <section class="sizes section" aria-labelledby="sizes-title">
     {SIZE_DEFS}
     <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2" id="sizes-title">Bags, jars and tubs</h2>
-        <p class="lede">From a 250g bag of coffee to 30kg of raw honey.</p>
+      <div class="section-head">
+        {lines("Bags, jars and tubs", id_="sizes-title", cls="h2 h2--xl")}
+        <p class="lede" data-fade>From a 250g bag of coffee to 30kg of raw honey.</p>
       </div>
       <div class="sizes__groups">
-        <div class="sizes__group reveal">
+        <div class="sizes__group" data-rise>
           <h3><img src="./images/noosa-coffee-co.svg" alt="" width="28" height="28">Roasted coffee <small>Noosa Coffee Co</small></h3>
           <ul class="sizes__row">
             {size("s-bag", 88, "64/100", "250g", "bag")}
@@ -269,7 +356,7 @@ INDEX = f"""
             {size("s-bag", 144, "64/100", "1kg", "bag")}
           </ul>
         </div>
-        <div class="sizes__group reveal" data-delay="1">
+        <div class="sizes__group" data-rise>
           <h3>Raw honey <small>Noosa Tropical Farm</small></h3>
           <ul class="sizes__row">
             {size("s-jar", 74, "56/78", "500g", "jar")}
@@ -278,7 +365,7 @@ INDEX = f"""
             {size("s-pail", 150, "120/150", "30kg", "")}
           </ul>
         </div>
-        <div class="sizes__group reveal" data-delay="2">
+        <div class="sizes__group" data-rise>
           <h3>Honeycomb</h3>
           <ul class="sizes__row">
             {size("s-comb", 48, "84/48", "250g", "tub")}
@@ -290,19 +377,19 @@ INDEX = f"""
 
   <section class="bulk section" aria-labelledby="bulk-title">
     <div class="wrap bulk__grid">
-      <div class="bulk__intro reveal">
-        <h2 class="h2" id="bulk-title">Buying for a café or business?</h2>
-        <p class="lede">We pack larger sizes for cafés, kitchens and resellers. Tell us what you need and how often, and we&rsquo;ll come back to you.</p>
-        <img src="./images/green-beans.webp" alt="A close view of green, unroasted coffee beans" width="684" height="456" loading="lazy" decoding="async">
+      <div class="bulk__intro">
+        {lines("Buying for a café", "or business?", id_="bulk-title", cls="h2 h2--xl")}
+        <p class="lede" data-fade>We pack larger sizes for cafés, kitchens and resellers. Tell us what you need and how often, and we&rsquo;ll come back to you.</p>
+        <div class="frame frame--bulk" data-veil><img class="parallax-img" src="./images/green-beans.webp" alt="A close view of green, unroasted coffee beans" width="684" height="456" loading="lazy" decoding="async"></div>
       </div>
-      <div class="reveal" data-delay="1">
-        <dl class="spec">
+      <div class="bulk__side">
+        <dl class="spec" data-stagger>
           <div><dt>Roasted coffee</dt><dd><strong>1kg bags</strong>, single origin Arabica or blends</dd></div>
           <div><dt>Green coffee beans</dt><dd>Brazil, Vietnam, Colombia, Papua New Guinea and India</dd></div>
           <div><dt>Raw honey</dt><dd><strong>3kg and 30kg</strong>, no preservatives, colourings or additives</dd></div>
         </dl>
-        <div class="actions">
-          <a class="btn" href="./contact.html?product=bulk">Make a bulk enquiry {ARROW}</a>
+        <div class="actions" data-fade>
+          <a class="btn" href="./contact.html?product=bulk"><span>Make a bulk enquiry</span> {ARROW}</a>
         </div>
       </div>
     </div>
@@ -313,28 +400,29 @@ INDEX = f"""
 
 COFFEE = f"""
 <main id="main">
-  <section class="coffee-hero" aria-labelledby="page-title">
-    <div class="coffee-hero__grid">
-      <div class="coffee-hero__text">
-        <h1 class="h1 reveal" id="page-title">Coffee, roasted in&nbsp;Noosa</h1>
-        <p class="lede reveal" data-delay="1">Single origin roasted Arabica coffee beans and blends from Noosa Coffee Co, in 250g, 500g and 1kg bags. And green coffee beans from five origins, for those who roast their own.</p>
-        <div class="actions reveal" data-delay="2">
-          <a class="btn" href="#roasted">Roasted coffee</a>
-          <a class="btn btn--line" href="#green">Green coffee beans</a>
+  <section class="page-hero page-hero--coffee" aria-labelledby="page-title">
+    <div class="wrap page-hero__grid">
+      <div class="page-hero__text">
+        <p class="label" data-intro data-fade>Noosa Coffee Co</p>
+        {lines("Coffee,", "roasted in Noosa", tag="h1", cls="h1", id_="page-title", intro=True)}
+        <p class="lede" data-intro data-fade>Single origin roasted Arabica coffee beans and blends, in 250g, 500g and 1kg bags. And green coffee beans from five origins, for those who roast their own.</p>
+        <div class="actions" data-intro data-fade>
+          <a class="btn" href="#roasted"><span>Roasted coffee</span></a>
+          <a class="btn btn--line" href="#green"><span>Green coffee beans</span></a>
         </div>
       </div>
-      <figure class="coffee-hero__media">
-        <img class="coffee-hero__photo" src="./images/coffee-bags.webp" alt="Noosa Coffee Co single origin roasted Arabica coffee beans in a 1kg and a 250g bag, with eucalyptus leaves and roasted beans on a sand backdrop" width="683" height="738" fetchpriority="high">
-        <img class="coffee-hero__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350">
+      <figure class="page-hero__media" data-intro data-parallax="-.06">
+        <div class="frame" data-veil><img src="./images/coffee-bags.webp" alt="{COFFEE_ALT}" width="683" height="738" fetchpriority="high"></div>
+        <img class="page-hero__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350" data-pop>
       </figure>
     </div>
   </section>
 
   <section class="section" id="roasted" aria-labelledby="roasted-title">
     <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2" id="roasted-title">Roasted coffee</h2>
-        <p class="lede">Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
+      <div class="section-head">
+        {lines("Roasted coffee", id_="roasted-title", cls="h2 h2--xl")}
+        <p class="lede" data-fade>Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
       </div>
       <div class="cards cards--2" data-products="single-origin,blends">
         <noscript><p>See our roasted coffee range, or <a href="./contact.html">send an enquiry</a>.</p></noscript>
@@ -342,16 +430,16 @@ COFFEE = f"""
     </div>
   </section>
 
-  <div class="duo" aria-hidden="false">
-    <img src="./images/coffee-cherries.webp" alt="Ripe red coffee cherries hanging among dark green leaves" width="1200" height="1800" loading="lazy" decoding="async">
-    <img src="./images/coffee-cherries-branch.webp" alt="Branches of a coffee plant heavy with red and green coffee cherries" width="1600" height="1067" loading="lazy" decoding="async">
+  <div class="duo">
+    <div class="duo__a frame" data-veil><img class="parallax-img" src="./images/coffee-cherries.webp" alt="Ripe red coffee cherries hanging among dark green leaves" width="1200" height="1800" loading="lazy" decoding="async"></div>
+    <div class="duo__b frame" data-veil><img class="parallax-img" src="./images/coffee-cherries-branch.webp" alt="Branches of a coffee plant heavy with red and green coffee cherries" width="1600" height="1067" loading="lazy" decoding="async"></div>
   </div>
 
   <section class="section on-dark" id="green" aria-labelledby="green-title">
     <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2" id="green-title">Green coffee beans</h2>
-        <p class="lede">Green, unroasted coffee beans from five origins. Choose an origin to enquire.</p>
+      <div class="section-head">
+        {lines("Green coffee beans", id_="green-title", cls="h2 h2--xl")}
+        <p class="lede" data-fade>Green, unroasted coffee beans from five origins. Choose an origin to enquire.</p>
       </div>
       <div data-products="green-beans" data-variant="origin">
         <noscript><p>Origins: Brazil, Vietnam, Colombia, Papua New Guinea and India. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
@@ -362,55 +450,53 @@ COFFEE = f"""
 </main>
 """
 
-NO_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.5"/></svg>'
-HEX_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z" fill="currentColor"/></svg>'
-
 HONEY = f"""
 <main id="main">
-  <section class="intro--honey on-dark" aria-labelledby="page-title">
-    <div class="honey-hero">
+  <section class="honey-hero on-dark" aria-labelledby="page-title">
+    <div class="honey-hero__grid">
       <div class="honey-hero__text">
-        <p class="label reveal">Noosa Tropical Farm</p>
-        <h1 class="h1 reveal" id="page-title">Pure raw honey, with nothing&nbsp;added</h1>
-        <p class="lede reveal" data-delay="1">Raw honey from Noosa Tropical Farm, in 500g, 1kg, 3kg and 30kg. And honeycomb, packed in 250g tubs.</p>
-        <div class="actions reveal" data-delay="2">
-          <a class="btn btn--honey" href="./contact.html?product=raw-honey">Enquire about honey {ARROW}</a>
-          <a class="btn btn--light-line" href="#raw-honey">See sizes</a>
+        <p class="label" data-intro data-fade>Noosa Tropical Farm</p>
+        {lines("Pure raw honey,", "with nothing added", tag="h1", cls="h1", id_="page-title", intro=True)}
+        <p class="lede" data-intro data-fade>Raw honey from Noosa Tropical Farm, in 500g, 1kg, 3kg and 30kg. And honeycomb, packed in 250g tubs.</p>
+        <div class="actions" data-intro data-fade>
+          <a class="btn btn--honey" href="./contact.html?product=raw-honey"><span>Enquire about honey</span> {ARROW}</a>
+          <a class="btn btn--light-line" href="#raw-honey"><span>See sizes</span></a>
         </div>
       </div>
-      <figure class="honey-hero__media">
-        <img src="./images/honey.webp" alt="Noosa Tropical Farm raw honey in two 500g jars and a tub with yellow lids, on grey stone" width="683" height="1024" fetchpriority="high">
+      <figure class="honey-hero__media" data-intro>
+        <div class="frame" data-veil><img class="parallax-img" src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024" fetchpriority="high"></div>
       </figure>
     </div>
   </section>
 
   <section class="label-strip" aria-label="What is in the jar">
     <div class="wrap">
-      <ul>
+      <ul data-stagger>
         <li>{NO_ICON}No preservatives</li>
         <li>{NO_ICON}No colourings</li>
         <li>{NO_ICON}No additives</li>
         <li>{HEX_ICON}Pure raw honey</li>
       </ul>
     </div>
+    {drips(5, count=18, max_len=150, band=False)}
   </section>
 
-  <section class="section" id="honey" aria-labelledby="honey-title">
+  <section class="section section--after-drips" id="honey" aria-labelledby="honey-title">
     <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2" id="honey-title">Honey and honeycomb</h2>
-        <p class="lede">Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
+      <div class="section-head">
+        {lines("Honey and honeycomb", id_="honey-title", cls="h2 h2--xl")}
+        <p class="lede" data-fade>Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
       </div>
       <div class="cards cards--2 cards--honey" data-products="raw-honey,honeycomb">
         <noscript><p>Raw honey in 500g, 1kg, 3kg and 30kg; honeycomb in 250g tubs. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
       </div>
-      <div class="honey-note reveal">
+      <div class="honey-note" data-fade>
         <div>
           <h3 class="h3">Larger tubs for cafés and kitchens</h3>
-          <p style="margin-top:14px">Raw honey in 3kg and 30kg, for cafés, kitchens and businesses.</p>
+          <p>Raw honey in 3kg and 30kg, for cafés, kitchens and businesses.</p>
         </div>
         <div class="actions">
-          <a class="btn" href="./contact.html?product=bulk">Make a bulk enquiry {ARROW}</a>
+          <a class="btn" href="./contact.html?product=bulk"><span>Make a bulk enquiry</span> {ARROW}</a>
         </div>
       </div>
     </div>
@@ -424,23 +510,23 @@ CONTACT = f"""
   <section class="contact" aria-labelledby="page-title">
     <div class="wrap contact__grid">
       <div class="contact__aside">
-        <h1 class="h1 reveal" id="page-title">Get in touch</h1>
-        <p class="lede reveal" data-delay="1">Questions, orders or bulk enquiries, send us a message and we&rsquo;ll get back to you.</p>
-        <div class="contact__place reveal" data-delay="2">
+        {lines("Get in touch", tag="h1", cls="h1", id_="page-title", intro=True)}
+        <p class="lede" data-intro data-fade>Questions, orders or bulk enquiries, send us a message and we&rsquo;ll get back to you.</p>
+        <div class="contact__place" data-intro data-fade>
           <span>Location</span>
           <strong>Noosa Heads, Queensland, Australia</strong>
         </div>
-        <img class="reveal" data-delay="2" src="./images/eucalyptus.webp" alt="Sprigs of round eucalyptus leaves against a pale background" width="1200" height="800" loading="lazy" decoding="async">
+        <div class="frame frame--contact" data-veil><img src="./images/eucalyptus.webp" alt="Sprigs of round eucalyptus leaves against a pale background" width="1200" height="800" loading="lazy" decoding="async"></div>
       </div>
 
-      <div>
+      <div data-intro data-fade>
         <!--
           FORMSPREE: the form ID must be added before the site goes live.
           Create a form at https://formspree.io, then replace REPLACE_ME below with the form ID
           (e.g. https://formspree.io/f/abcdwxyz). Until then the form shows the thank-you
           message but no enquiry is sent.
         -->
-        <form class="form reveal" id="enquiry-form" action="https://formspree.io/f/REPLACE_ME" method="POST" novalidate>
+        <form class="form" id="enquiry-form" action="https://formspree.io/f/REPLACE_ME" method="POST" novalidate>
           <input type="hidden" name="_subject" value="New enquiry from the Noosa Food &amp; Coffee Co website">
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
           <div class="form__row form__row--2">
@@ -468,6 +554,10 @@ CONTACT = f"""
                 <option>Green coffee beans</option>
                 <option>Raw honey</option>
                 <option>Honeycomb</option>
+                <option>Vanilla beans</option>
+                <option>Finger limes</option>
+                <option>Dried lime slices</option>
+                <option>Fresh herbs</option>
                 <option>Bulk / café order</option>
                 <option>Other</option>
               </select>
@@ -486,7 +576,7 @@ CONTACT = f"""
             <span class="field__error">Please add a short message.</span>
           </div>
           <div class="form__foot">
-            <button class="btn" type="submit">Send enquiry {ARROW}</button>
+            <button class="btn btn--lg" type="submit"><span>Send enquiry</span> {ARROW}</button>
             <p class="form__status" role="status" aria-live="polite"></p>
           </div>
         </form>
@@ -505,7 +595,7 @@ CONTACT = f"""
 
 PAGES = {
     "index.html": ("Noosa Roasted Coffee &amp; Raw Honey | Noosa Food &amp; Coffee Co",
-                   "Single origin Arabica and blends roasted in Noosa, green coffee beans, and pure raw honey and honeycomb from Noosa Heads, Queensland.",
+                   "Single origin Arabica and blends roasted in Noosa, green coffee beans, raw honey and honeycomb, plus vanilla beans, finger limes and herbs. Noosa Heads, Queensland.",
                    INDEX),
     "coffee.html": ("Roasted Coffee &amp; Green Coffee Beans | Noosa Coffee Co",
                     "Single origin roasted Arabica coffee beans and blends, roasted in Noosa, in 250g, 500g and 1kg bags. Green coffee beans from Brazil, Vietnam, Colombia, PNG and India.",

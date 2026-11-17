@@ -1,4 +1,5 @@
-/* Noosa Food & Coffee Co — site behaviour (vanilla JS, no dependencies) */
+/* Noosa Food & Coffee Co — site behaviour (vanilla JS, no dependencies).
+   Animation lives in js/motion.js; everything here works without it. */
 (function () {
   "use strict";
 
@@ -13,13 +14,22 @@
     });
   }
 
-  /* ---------- Header: compact logo once scrolled ---------- */
+  /* ---------- Header: compact logo once scrolled, hide on the way down ---------- */
   var header = document.querySelector(".site-header");
+  var lastY = window.scrollY;
   function onScroll() {
-    if (header) header.classList.toggle("is-scrolled", window.scrollY > 24);
+    if (!header) return;
+    var y = window.scrollY;
+    header.classList.toggle("is-scrolled", y > 24);
+    if (!document.body.classList.contains("menu-open")) {
+      if (y > 320 && y > lastY + 4) header.classList.add("is-hidden");
+      else if (y < lastY - 4 || y < 320) header.classList.remove("is-hidden");
+    }
+    lastY = y;
   }
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
+  if (header) header.addEventListener("focusin", function () { header.classList.remove("is-hidden"); });
 
   /* ---------- Mobile menu ---------- */
   var toggle = document.querySelector(".menu-toggle");
@@ -29,6 +39,7 @@
     var setOpen = function (open) {
       document.body.classList.toggle("menu-open", open);
       header.classList.toggle("menu-open", open);
+      header.classList.remove("is-hidden");
       toggle.setAttribute("aria-expanded", String(open));
       if (label) label.textContent = open ? "Close" : "Menu";
       menu.inert = !open;
@@ -67,7 +78,7 @@
     return "./contact.html" + q;
   }
 
-  function renderCard(p, idx) {
+  function renderCard(p) {
     var name = "opt-" + p.id;
     var pills = p.options.map(function (o, i) {
       return '<label class="pill"><input type="radio" name="' + name + '" value="' + esc(o.label) + '"' +
@@ -75,9 +86,9 @@
     }).join("");
     var single = p.options.length === 1;
     return (
-      '<article class="card reveal" id="' + esc(p.id) + '" data-delay="' + (idx % 2) + '" data-product="' + esc(p.id) + '">' +
-        '<div class="card__media"><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>' +
-        '<div class="card__body">' +
+      '<article class="card" id="' + esc(p.id) + '" data-product="' + esc(p.id) + '">' +
+        '<div class="card__media frame" data-veil><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>' +
+        '<div class="card__body" data-stagger>' +
           '<p class="card__brand">' + esc(p.brand) + "</p>" +
           '<h3 class="card__title">' + esc(p.name) + "</h3>" +
           '<p class="card__desc">' + esc(p.description) + "</p>" +
@@ -85,7 +96,7 @@
             '<div class="pills">' + pills + "</div></fieldset>" +
           /* Cart slot: swap this button for "Add to cart" when the shop goes live. */
           '<div class="card__actions" data-cart-slot>' +
-            '<a class="btn" data-enquire href="' + enquiryHref(p, p.options[0] && p.options[0].label) + '">Enquire ' + ARROW + "</a>" +
+            '<a class="btn" data-enquire href="' + enquiryHref(p, p.options[0] && p.options[0].label) + '"><span>Enquire</span> ' + ARROW + "</a>" +
             '<span class="card__note">Price on enquiry</span>' +
           "</div>" +
         "</div>" +
@@ -101,15 +112,29 @@
     }).join("");
     return (
       '<article class="origin" id="' + esc(p.id) + '" data-product="' + esc(p.id) + '">' +
-        '<div class="origin__media reveal"><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>' +
-        '<div class="origin__body reveal" data-delay="1">' +
-          '<h3 class="h3 visually-hidden">' + esc(p.name) + "</h3>" +
-          '<fieldset><legend class="visually-hidden">Choose an origin</legend><ul class="origin__list">' + rows + "</ul></fieldset>" +
-          '<div class="card__actions" data-cart-slot>' +
-            '<a class="btn btn--light" data-enquire href="' + enquiryHref(p, p.options[0].label) + '">Enquire about this origin ' + ARROW + "</a>" +
+        '<div class="origin__media frame" data-veil><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>' +
+        '<div class="origin__body">' +
+          '<h3 class="visually-hidden">' + esc(p.name) + "</h3>" +
+          '<fieldset><legend class="visually-hidden">Choose an origin</legend><ul class="origin__list" data-stagger>' + rows + "</ul></fieldset>" +
+          '<div class="card__actions" data-cart-slot data-fade>' +
+            '<a class="btn btn--light" data-enquire href="' + enquiryHref(p, p.options[0].label) + '"><span>Enquire about this origin</span> ' + ARROW + "</a>" +
             '<span class="card__note">Price on enquiry</span>' +
           "</div>" +
         "</div>" +
+      "</article>"
+    );
+  }
+
+  /* Pantry tiles: the whole tile is one link to a pre-filled enquiry.
+     When the shop goes live, the tile__cta span is the cart slot. */
+  function renderTile(p, idx) {
+    return (
+      '<article class="tile tile--' + (idx + 1) + '" id="' + esc(p.id) + '" data-product="' + esc(p.id) + '">' +
+        '<a class="tile__link" href="' + enquiryHref(p) + '">' +
+          '<span class="tile__media frame tile__media--' + esc(p.fit || "cover") + '" data-veil><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></span>' +
+          '<span class="tile__foot" data-fade><span class="tile__name">' + esc(p.name) + "</span>" +
+          '<span class="tile__cta" data-cart-slot>Enquire ' + ARROW + "</span></span>" +
+        "</a>" +
       "</article>"
     );
   }
@@ -120,7 +145,9 @@
     mount.innerHTML = ids.map(function (id, i) {
       var p = byId(id.trim());
       if (!p) return "";
-      return variant === "origin" ? renderOrigin(p) : renderCard(p, i);
+      if (variant === "origin") return renderOrigin(p);
+      if (variant === "tile") return renderTile(p, i);
+      return renderCard(p);
     }).join("");
   });
 
@@ -179,6 +206,8 @@
       productSel.value = p.enquiry;
       if (!message.value && p.id === "green-beans" && chosen) {
         message.value = "I'm interested in green coffee beans from " + chosen + ".";
+      } else if (!message.value && p.category === "pantry") {
+        message.value = "I'm interested in " + p.name.toLowerCase() + ".";
       } else if (!message.value && p.id === "blends") {
         message.value = "I'm interested in your roasted coffee blends.";
       }
@@ -191,18 +220,20 @@
     var success = document.getElementById("form-success");
     var status = form.querySelector(".form__status");
     var submit = form.querySelector("button[type='submit']");
+    var submitLabel = submit.querySelector("span");
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
       status.textContent = "";
       submit.disabled = true;
-      submit.firstChild.textContent = "Sending… ";
+      submitLabel.textContent = "Sending…";
 
       var done = function () {
         form.hidden = true;
         success.hidden = false;
-        success.focus();
+        success.classList.add("is-shown");
+        success.focus({ preventScroll: true });
         success.scrollIntoView({ behavior: "smooth", block: "center" });
       };
 
@@ -221,23 +252,9 @@
         .catch(function () {
           status.textContent = "Sorry, that didn't go through. Please try again in a moment.";
           submit.disabled = false;
-          submit.firstChild.textContent = "Send enquiry ";
+          submitLabel.textContent = "Send enquiry";
         });
     });
-  }
-
-  /* ---------- Scroll reveal ---------- */
-  var reveals = document.querySelectorAll(".reveal");
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!("IntersectionObserver" in window) || reduce) {
-    reveals.forEach(function (el) { el.classList.add("is-in"); });
-  } else {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-    reveals.forEach(function (el) { io.observe(el); });
   }
 
   /* ---------- Footer year ---------- */
