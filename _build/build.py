@@ -335,11 +335,7 @@ COFFEE = f"""
       <div class="page-hero__text">
         <p class="label" data-intro data-fade>Noosa Coffee Co</p>
         {lines("Coffee,", "roasted in Noosa", tag="h1", cls="h1", id_="page-title", intro=True)}
-        <p class="lede" data-intro data-fade>Single origin roasted Arabica coffee beans and blends, in 250g, 500g and 1kg bags. And green coffee beans from five origins, for those who roast their own.</p>
-        <div class="actions" data-intro data-fade>
-          <a class="btn" href="#roasted"><span>Roasted coffee</span></a>
-          <a class="btn btn--line" href="#green"><span>Green coffee beans</span></a>
-        </div>
+        <ul class="coffees coffees--stack" data-intro data-stagger>{COFFEE_LIST}</ul>
       </div>
       <figure class="page-hero__media" data-intro data-parallax="-.06">
         <div class="frame" data-veil><img src="./images/coffee-bags.webp" alt="{COFFEE_ALT}" width="683" height="738" fetchpriority="high"></div>
@@ -365,17 +361,6 @@ COFFEE = f"""
     <div class="duo__b frame" data-veil><img class="parallax-img" src="./images/coffee-cherries-branch.webp" alt="Branches of a coffee plant heavy with red and green coffee cherries" width="1600" height="1067" loading="lazy" decoding="async"></div>
   </div>
 
-  <section class="section on-dark" id="green" aria-labelledby="green-title">
-    <div class="wrap">
-      <div class="section-head">
-        {lines("Green coffee beans", id_="green-title", cls="h2 h2--xl")}
-        <p class="lede" data-fade>Green, unroasted coffee beans from five origins. Choose an origin to enquire.</p>
-      </div>
-      <div data-products="green-beans" data-variant="origin">
-        <noscript><p>Origins: Brazil, Vietnam, Colombia, Papua New Guinea and India. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
-      </div>
-    </div>
-  </section>
 {CTA}
 </main>
 """
@@ -481,7 +466,6 @@ CONTACT = f"""
               <select id="product" name="product" required>
                 <option value="">Choose a product</option>
                 <option>Roasted coffee</option>
-                <option>Green coffee beans</option>
                 <option>Raw honey</option>
                 <option>Honeycomb</option>
                 <option>Bulk / café order</option>
@@ -521,16 +505,16 @@ CONTACT = f"""
 
 PAGES = {
     "index.html": ("Noosa Roasted Coffee &amp; Raw Honey | Noosa Food &amp; Coffee Co",
-                   "Sunrise Blend and single origin coffees roasted in Noosa, green coffee beans, and pure raw honey and honeycomb sourced from Noosa, Queensland.",
+                   "Sunrise Blend and single origin coffees roasted in Noosa, and pure raw honey and honeycomb sourced from Noosa, Queensland.",
                    INDEX),
-    "coffee.html": ("Roasted Coffee &amp; Green Coffee Beans | Noosa Coffee Co",
-                    "Single origin roasted Arabica coffee beans and blends, roasted in Noosa, in 250g, 500g and 1kg bags. Green coffee beans from Brazil, Vietnam, Colombia, PNG and India.",
+    "coffee.html": ("Roasted Coffee from Noosa | Noosa Coffee Co",
+                    "Sunrise Blend, Single Origin Brazilian, Single Origin Colombian and Decaf Colombian Tumbaga, roasted in Noosa by Noosa Coffee Co. In 250g, 500g and 1kg bags.",
                     COFFEE),
     "honey.html": ("Pure Raw Honey &amp; Honeycomb | Noosa Tropical Farm",
                    "Pure raw honey with no preservatives, colourings or additives, in 500g, 1kg, 3kg and 30kg, and honeycomb in 250g tubs. From Noosa Heads, Queensland.",
                    HONEY),
     "contact.html": ("Contact &amp; Enquiries | Noosa Food &amp; Coffee Co",
-                     "Questions, orders or bulk and café enquiries for roasted coffee, green coffee beans, raw honey and honeycomb. Noosa Heads, Queensland, Australia.",
+                     "Questions, orders or bulk and café enquiries for roasted coffee, raw honey and honeycomb. Noosa Heads, Queensland, Australia.",
                      CONTACT),
 }
 

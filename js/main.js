@@ -204,9 +204,7 @@
     var p = pid ? byId(pid) : null;
     if (p) {
       productSel.value = p.enquiry;
-      if (!message.value && p.id === "green-beans" && chosen) {
-        message.value = "I'm interested in green coffee beans from " + chosen + ".";
-      } else if (!message.value && p.category === "pantry") {
+      if (!message.value && p.category === "pantry") {
         message.value = "I'm interested in " + p.name.toLowerCase() + ".";
       } else if (!message.value && p.id === "blends") {
         message.value = "I'm interested in your roasted coffee blends.";

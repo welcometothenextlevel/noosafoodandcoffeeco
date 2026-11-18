@@ -41,26 +41,6 @@ window.NFC_PRODUCTS = [
     alt: "Freshly roasted coffee beans turning in the cooling tray of a roaster"
   },
   {
-    id: "green-beans",
-    name: "Green coffee beans",
-    brand: "Noosa Food & Coffee Co",
-    category: "green-coffee",
-    enquiry: "Green coffee beans",
-    description: "Green, unroasted coffee beans from five origins.",
-    optionLabel: "Origin",
-    options: [
-      { label: "Brazil" },
-      { label: "Vietnam" },
-      { label: "Colombia" },
-      { label: "Papua New Guinea" },
-      { label: "India" }
-    ],
-    image: "./images/green-beans.webp",
-    width: 684,
-    height: 456,
-    alt: "A close view of green, unroasted coffee beans"
-  },
-  {
     id: "raw-honey",
     name: "Pure raw honey",
     brand: "Noosa Tropical Farm",
@@ -96,7 +76,6 @@ window.NFC_ENQUIRY_EXTRA = {
     optionLabel: "Size",
     options: [
       { label: "1kg bags of roasted coffee" },
-      { label: "Green coffee beans" },
       { label: "3kg raw honey" },
       { label: "30kg raw honey" }
     ]
