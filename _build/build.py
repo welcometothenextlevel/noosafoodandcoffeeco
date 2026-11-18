@@ -25,6 +25,14 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://welcometothenextlevel.github.io/noosafoodandcoffeeco/"
 ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
 CUR = ' aria-current="page"'
+import hashlib
+
+
+def ver(rel):
+    """Short content hash, so browsers fetch the new file after each change."""
+    return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
+
+
 NAV = [("index.html", "Home"), ("coffee.html", "Coffee"), ("honey.html", "Honey"), ("contact.html", "Contact")]
 
 
@@ -101,7 +109,7 @@ def head(title, desc, page):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&amp;family=Fraunces:opsz,wght,SOFT@9..144,300..500,0..100&amp;display=swap">
-<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/style.css?v={ver('css/style.css')}">
 </head>
 """
 
@@ -185,12 +193,12 @@ def footer():
     </div>
   </div>
 </footer>
-<script src="./js/products.js"></script>
-<script src="./js/main.js"></script>
+<script src="./js/products.js?v={ver('js/products.js')}"></script>
+<script src="./js/main.js?v={ver('js/main.js')}"></script>
 <script src="./js/vendor/gsap.min.js" defer></script>
 <script src="./js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="./js/vendor/lenis.min.js" defer></script>
-<script src="./js/motion.js" defer></script>
+<script src="./js/motion.js?v={ver('js/motion.js')}" defer></script>
 </body>
 </html>
 """
@@ -400,15 +408,6 @@ HONEY = f"""
       </div>
       <div class="cards cards--2 cards--honey" data-products="raw-honey,honeycomb">
         <noscript><p>Raw honey in 500g, 1kg, 3kg and 30kg; honeycomb in 250g tubs. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
-      </div>
-      <div class="honey-note" data-fade>
-        <div>
-          <h3 class="h3">Larger tubs for cafés and kitchens</h3>
-          <p>Raw honey in 3kg and 30kg, for cafés, kitchens and businesses.</p>
-        </div>
-        <div class="actions">
-          <a class="btn" href="./contact.html?product=bulk"><span>Make a bulk enquiry</span> {ARROW}</a>
-        </div>
       </div>
     </div>
   </section>
