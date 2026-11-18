@@ -204,7 +204,7 @@
   });
 
   // Home hero text drifts and dims as it leaves
-  var heroText = document.querySelector(".hero__text, .hero__brand");
+  var heroText = document.querySelector(".hero__text, .hero__brand, .hero__center");
   if (heroText) {
     gsap.to(heroText, {
       y: 90, opacity: 0.25, ease: "none",

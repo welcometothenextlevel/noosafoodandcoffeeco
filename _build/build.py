@@ -268,36 +268,32 @@ INDEX = f"""
 <main id="main">
   <section class="hero hero--home on-dark" aria-labelledby="hero-title">
     <h1 class="visually-hidden" id="hero-title">Noosa Food &amp; Coffee Co: coffee roasted in Noosa and raw honey from Noosa</h1>
-    <div class="hero__split">
-      <div class="hero__brand">
-        <div class="hero__logo frame" data-intro data-veil><img src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" fetchpriority="high"></div>
-        <div class="actions hero__actions" data-intro data-fade>
-          <a class="btn btn--light btn--lg" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
-          <a class="btn btn--light-line btn--lg" href="./honey.html"><span>Our Honey</span> {ARROW}</a>
-        </div>
+    <div class="hero__bg frame" data-intro data-veil>
+      <img class="parallax-img" src="./images/coffee-beans-hero.webp" alt="" width="1600" height="2409" fetchpriority="high">
+      <span class="hero__shade" aria-hidden="true"></span>
+    </div>
+    <div class="hero__center">
+      <img class="hero__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" data-intro data-fade>
+      <div class="actions hero__actions" data-intro data-fade>
+        <a class="btn btn--light btn--lg" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
+        <a class="btn btn--light-line btn--lg" href="./honey.html"><span>Our Honey</span> {ARROW}</a>
       </div>
-      <figure class="hero__beans" data-intro>
-        <div class="frame" data-veil><img class="parallax-img" src="./images/coffee-beans-hero.webp" alt="Dark roasted coffee beans" width="1600" height="2409" fetchpriority="high"></div>
-      </figure>
     </div>
     <a class="scroll-cue" href="#coffee-title" data-intro data-fade><span>Scroll</span><i aria-hidden="true"></i></a>
   </section>
 
   <section class="chapter chapter--coffee" aria-labelledby="coffee-title">
-    <div class="wrap chapter__grid">
-      <div class="chapter__media">
-        <div class="frame frame--tall" data-veil><img class="parallax-img" src="./images/roasting.webp" alt="Freshly roasted coffee beans being stirred with a metal scoop in a roaster" width="1600" height="1067" loading="lazy" decoding="async"></div>
-        <img class="chapter__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350" loading="lazy" data-pop>
-      </div>
-      <div class="chapter__body">
-        <p class="label" data-fade>Noosa Coffee Co</p>
-        {lines("Our coffee", id_="coffee-title", cls="h2 h2--xl")}
-        <p data-fade>Single origin roasted Arabica and blends, roasted in Noosa and packed in 250g, 500g and 1kg bags.</p>
-        <p data-fade>Green coffee beans too, from Brazil, Vietnam, Colombia, Papua New Guinea and India.</p>
+    <div class="wrap">
+      <div class="coffee-head">
+        <div class="coffee-head__title">
+          <img class="coffee-head__badge" src="./images/noosa-coffee-co.svg" alt="Noosa Coffee Co" width="350" height="350" loading="lazy" data-pop>
+          <div>
+            <p class="label" data-fade>Noosa Coffee Co</p>
+            {lines("Our coffee", id_="coffee-title", cls="h2 h2--xl")}
+          </div>
+        </div>
         <p data-fade><a class="link" href="./coffee.html">See the coffee {ARROW}</a></p>
       </div>
-    </div>
-    <div class="wrap">
       <ul class="coffees" data-stagger>{COFFEE_LIST}</ul>
     </div>
   </section>
