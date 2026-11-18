@@ -134,7 +134,7 @@ def header(page):
     <ul>{mlinks}</ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--light" href="./contact.html"><span>Send an enquiry</span> {ARROW}</a>
+    <a class="btn btn--light" href="./contact.html"><span>Contact us</span> {ARROW}</a>
     <p>Noosa Heads, Queensland, Australia</p>
   </div>
 </div>
@@ -150,7 +150,7 @@ CTA = f"""
       <p class="cta__text" data-fade>Questions, orders or bulk enquiries. Send us a message and we&rsquo;ll get back to you.</p>
     </div>
     <div data-fade>
-      <a class="btn btn--lg" href="./contact.html"><span>Send an enquiry</span> {ARROW}</a>
+      <a class="btn btn--lg" href="./contact.html"><span>Contact us</span> {ARROW}</a>
     </div>
   </div>
 </section>
@@ -254,30 +254,31 @@ HEX_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8.66 5v10
 COFFEE_ALT = "Noosa Coffee Co single origin roasted Arabica coffee beans in a 1kg and a 250g bag, with eucalyptus leaves and roasted beans on a sand backdrop"
 HONEY_ALT = "Noosa Tropical Farm raw honey in two 500g jars and a tub with yellow lids, on grey stone"
 
+COFFEES = [
+    ("Sunrise Blend", "Delivers a heavy body, thick crema and an intense milk chocolate, dried fruit and hazelnut note."),
+    ("Single Origin Brazilian", "Offers crisp lemon and orange acidity together with smooth caramel notes, which linger in a nutty finish."),
+    ("Single Origin Colombian", "Offers milk chocolate, brown sugar and citrus notes."),
+    ("Decaf Colombian Tumbaga", "Offers milk chocolate, fruit and caramel notes."),
+]
+COFFEE_LIST = "".join(
+    f'<li class="coffees__item"><h3 class="coffees__name">{n}</h3><p class="coffees__notes">{t}</p></li>' for n, t in COFFEES
+)
+
 INDEX = f"""
 <main id="main">
-  <section class="hero on-dark" aria-labelledby="hero-title">
-    <div class="hero__inner wrap">
-      <div class="hero__text">
-        {lines("Roasted in Noosa.", "Raw honey", "from Noosa.", tag="h1", cls="h1 h1--hero", id_="hero-title", intro=True)}
-        <div class="hero__foot">
-          <p class="lede" data-intro data-fade>Single origin Arabica and blends from Noosa Coffee Co, roasted in Noosa. Pure raw honey and honeycomb from Noosa Tropical Farm, with nothing added.</p>
-          <div class="actions" data-intro data-fade>
-            <a class="btn btn--light" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
-            <a class="btn btn--light-line" href="./honey.html"><span>Our Honey</span></a>
-          </div>
+  <section class="hero hero--home on-dark" aria-labelledby="hero-title">
+    <h1 class="visually-hidden" id="hero-title">Noosa Food &amp; Coffee Co: coffee roasted in Noosa and raw honey from Noosa</h1>
+    <div class="hero__split">
+      <div class="hero__brand">
+        <div class="hero__logo frame" data-intro data-veil><img src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" fetchpriority="high"></div>
+        <div class="actions hero__actions" data-intro data-fade>
+          <a class="btn btn--light btn--lg" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
+          <a class="btn btn--light-line btn--lg" href="./honey.html"><span>Our Honey</span> {ARROW}</a>
         </div>
       </div>
-      <div class="hero__art">
-        <figure class="hero__card hero__card--coffee" data-intro data-parallax="-.08">
-          <div class="frame" data-veil><img src="./images/coffee-bags.webp" alt="{COFFEE_ALT}" width="683" height="738" fetchpriority="high"></div>
-          <figcaption>Noosa Coffee Co. Single origin roasted Arabica, 1kg and 250g.</figcaption>
-        </figure>
-        <figure class="hero__card hero__card--honey" data-intro data-parallax="-.22">
-          <div class="frame" data-veil><img src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024"></div>
-          <figcaption>Noosa Tropical Farm raw honey.</figcaption>
-        </figure>
-      </div>
+      <figure class="hero__beans" data-intro>
+        <div class="frame" data-veil><img class="parallax-img" src="./images/coffee-beans-hero.webp" alt="Dark roasted coffee beans" width="1600" height="2409" fetchpriority="high"></div>
+      </figure>
     </div>
     <a class="scroll-cue" href="#coffee-title" data-intro data-fade><span>Scroll</span><i aria-hidden="true"></i></a>
   </section>
@@ -295,6 +296,9 @@ INDEX = f"""
         <p data-fade>Green coffee beans too, from Brazil, Vietnam, Colombia, Papua New Guinea and India.</p>
         <p data-fade><a class="link" href="./coffee.html">See the coffee {ARROW}</a></p>
       </div>
+    </div>
+    <div class="wrap">
+      <ul class="coffees" data-stagger>{COFFEE_LIST}</ul>
     </div>
   </section>
 
@@ -320,80 +324,10 @@ INDEX = f"""
     </div>
   </section>
 
-  <section class="pantry section" id="pantry" aria-labelledby="pantry-title">
-    <div class="wrap">
-      <div class="pantry__head">
-        <div>
-          <p class="label" data-fade>Noosa Food &amp; Coffee Co</p>
-          {lines("Beyond coffee", "and honey", id_="pantry-title", cls="h2 h2--xl")}
-        </div>
-        <p class="lede" data-fade>Vanilla beans, finger limes, dried lime slices and fresh herbs. Ask us what&rsquo;s available and in what quantities.</p>
-      </div>
-      <div class="pantry__grid" data-products="vanilla-beans,finger-limes,dried-lime,herbs" data-variant="tile">
-        <noscript><p>Vanilla beans, finger limes, dried lime slices and fresh herbs. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
-      </div>
-    </div>
-  </section>
-
   <figure class="place">
     <div class="place__frame"><img class="place__img" src="./images/noosa-headland.webp" alt="Noosa Heads coastline with the headland, beach and clear water on a sunny day" width="1600" height="1082" loading="lazy" decoding="async"></div>
-    <figcaption class="place__note" data-fade><strong>Noosa Heads, Queensland</strong>Home of Noosa Food &amp; Coffee Co, where our coffee is roasted.</figcaption>
+    <figcaption class="place__note" data-fade><strong>Noosa Heads, Queensland</strong>Home of Noosa Food &amp; Coffee Co, where our coffee is roasted and where our honey is sourced.</figcaption>
   </figure>
-
-  <section class="sizes section" aria-labelledby="sizes-title">
-    {SIZE_DEFS}
-    <div class="wrap">
-      <div class="section-head">
-        {lines("Bags, jars and tubs", id_="sizes-title", cls="h2 h2--xl")}
-        <p class="lede" data-fade>From a 250g bag of coffee to 30kg of raw honey.</p>
-      </div>
-      <div class="sizes__groups">
-        <div class="sizes__group" data-rise>
-          <h3><img src="./images/noosa-coffee-co.svg" alt="" width="28" height="28">Roasted coffee <small>Noosa Coffee Co</small></h3>
-          <ul class="sizes__row">
-            {size("s-bag", 88, "64/100", "250g", "bag")}
-            {size("s-bag", 112, "64/100", "500g", "bag")}
-            {size("s-bag", 144, "64/100", "1kg", "bag")}
-          </ul>
-        </div>
-        <div class="sizes__group" data-rise>
-          <h3>Raw honey <small>Noosa Tropical Farm</small></h3>
-          <ul class="sizes__row">
-            {size("s-jar", 74, "56/78", "500g", "jar")}
-            {size("s-tub", 72, "96/72", "1kg", "")}
-            {size("s-tub", 100, "96/72", "3kg", "")}
-            {size("s-pail", 150, "120/150", "30kg", "")}
-          </ul>
-        </div>
-        <div class="sizes__group" data-rise>
-          <h3>Honeycomb</h3>
-          <ul class="sizes__row">
-            {size("s-comb", 48, "84/48", "250g", "tub")}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="bulk section" aria-labelledby="bulk-title">
-    <div class="wrap bulk__grid">
-      <div class="bulk__intro">
-        {lines("Buying for a café", "or business?", id_="bulk-title", cls="h2 h2--xl")}
-        <p class="lede" data-fade>We pack larger sizes for cafés, kitchens and resellers. Tell us what you need and how often, and we&rsquo;ll come back to you.</p>
-        <div class="frame frame--bulk" data-veil><img class="parallax-img" src="./images/green-beans.webp" alt="A close view of green, unroasted coffee beans" width="684" height="456" loading="lazy" decoding="async"></div>
-      </div>
-      <div class="bulk__side">
-        <dl class="spec" data-stagger>
-          <div><dt>Roasted coffee</dt><dd><strong>1kg bags</strong>, single origin Arabica or blends</dd></div>
-          <div><dt>Green coffee beans</dt><dd>Brazil, Vietnam, Colombia, Papua New Guinea and India</dd></div>
-          <div><dt>Raw honey</dt><dd><strong>3kg and 30kg</strong>, no preservatives, colourings or additives</dd></div>
-        </dl>
-        <div class="actions" data-fade>
-          <a class="btn" href="./contact.html?product=bulk"><span>Make a bulk enquiry</span> {ARROW}</a>
-        </div>
-      </div>
-    </div>
-  </section>
 {CTA}
 </main>
 """
@@ -554,10 +488,6 @@ CONTACT = f"""
                 <option>Green coffee beans</option>
                 <option>Raw honey</option>
                 <option>Honeycomb</option>
-                <option>Vanilla beans</option>
-                <option>Finger limes</option>
-                <option>Dried lime slices</option>
-                <option>Fresh herbs</option>
                 <option>Bulk / café order</option>
                 <option>Other</option>
               </select>
@@ -595,7 +525,7 @@ CONTACT = f"""
 
 PAGES = {
     "index.html": ("Noosa Roasted Coffee &amp; Raw Honey | Noosa Food &amp; Coffee Co",
-                   "Single origin Arabica and blends roasted in Noosa, green coffee beans, raw honey and honeycomb, plus vanilla beans, finger limes and herbs. Noosa Heads, Queensland.",
+                   "Sunrise Blend and single origin coffees roasted in Noosa, green coffee beans, and pure raw honey and honeycomb sourced from Noosa, Queensland.",
                    INDEX),
     "coffee.html": ("Roasted Coffee &amp; Green Coffee Beans | Noosa Coffee Co",
                     "Single origin roasted Arabica coffee beans and blends, roasted in Noosa, in 250g, 500g and 1kg bags. Green coffee beans from Brazil, Vietnam, Colombia, PNG and India.",

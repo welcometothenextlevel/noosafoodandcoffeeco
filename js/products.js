@@ -87,68 +87,6 @@ window.NFC_PRODUCTS = [
     width: 683,
     height: 670,
     alt: "Two pieces of golden honeycomb on a wooden board"
-  },
-  /* The wider pantry range. Sizes are not confirmed yet, so these
-     have no options and enquiries ask the customer to say what they need. */
-  {
-    id: "vanilla-beans",
-    name: "Vanilla beans",
-    brand: "Noosa Food & Coffee Co",
-    category: "pantry",
-    enquiry: "Vanilla beans",
-    description: "",
-    optionLabel: "Size",
-    options: [],
-    image: "./images/vanilla-beans.webp",
-    width: 683,
-    height: 1012,
-    fit: "cover",
-    alt: "Bundles of dark vanilla beans tied with raffia"
-  },
-  {
-    id: "finger-limes",
-    name: "Finger limes",
-    brand: "Noosa Food & Coffee Co",
-    category: "pantry",
-    enquiry: "Finger limes",
-    description: "",
-    optionLabel: "Size",
-    options: [],
-    image: "./images/finger-limes.webp",
-    width: 683,
-    height: 512,
-    fit: "contain",
-    alt: "Three finger limes, green, red and dark, cut open with their pearls spilling out"
-  },
-  {
-    id: "dried-lime",
-    name: "Dried lime slices",
-    brand: "Noosa Food & Coffee Co",
-    category: "pantry",
-    enquiry: "Dried lime slices",
-    description: "",
-    optionLabel: "Size",
-    options: [],
-    image: "./images/dried-lime.webp",
-    width: 479,
-    height: 535,
-    fit: "contain",
-    alt: "Thin dried lime slices arranged in a circle"
-  },
-  {
-    id: "herbs",
-    name: "Fresh herbs",
-    brand: "Noosa Food & Coffee Co",
-    category: "pantry",
-    enquiry: "Fresh herbs",
-    description: "",
-    optionLabel: "Size",
-    options: [],
-    image: "./images/herbs.webp",
-    width: 681,
-    height: 400,
-    fit: "cover",
-    alt: "A bunch of fresh herbs including mint, parsley, sage, thyme and rosemary"
   }
 ];
 

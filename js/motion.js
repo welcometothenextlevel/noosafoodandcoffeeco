@@ -204,7 +204,7 @@
   });
 
   // Home hero text drifts and dims as it leaves
-  var heroText = document.querySelector(".hero__text");
+  var heroText = document.querySelector(".hero__text, .hero__brand");
   if (heroText) {
     gsap.to(heroText, {
       y: 90, opacity: 0.25, ease: "none",
@@ -275,7 +275,7 @@
   /* ---------- Hero photos follow the pointer a little ---------- */
   if (desktop) {
     $$(".hero, .page-hero").forEach(function (sec) {
-      var cards = $$(".hero__card .frame, .page-hero__media .frame", sec);
+      var cards = $$(".hero__card .frame, .hero__beans .frame, .page-hero__media .frame", sec);
       var movers = cards.map(function (c, i) {
         var k = i === 0 ? 10 : 22;
         return {

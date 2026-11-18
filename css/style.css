@@ -683,3 +683,39 @@ body.menu-open { overflow: hidden; }
   .loader, .curtain { display: none; }
 }
 @media (max-width: 1023px) { .hero__card figcaption { display: none; } }
+
+/* ---------- Home hero: logo, buttons, coffee beans ---------- */
+.hero--home { padding: 0; }
+.hero--home::before { -webkit-mask-image: linear-gradient(90deg, #000 0%, transparent 55%); mask-image: linear-gradient(90deg, #000 0%, transparent 55%); }
+.hero__split { position: relative; flex: 1; display: grid; }
+.hero__brand {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(36px, 5vw, 64px);
+  padding: clamp(56px, 9vw, 96px) var(--gutter) clamp(48px, 7vw, 80px);
+}
+.hero__logo { width: clamp(200px, 26vw, 380px); overflow: hidden; }
+.hero__logo > img { height: auto; object-fit: contain; }
+.hero__actions { justify-content: center; }
+.hero__beans { position: relative; background: #1d1a17; }
+.hero__beans .frame { aspect-ratio: 4 / 4.4; translate: calc(var(--mx, 0) * 1px) calc(var(--my, 0) * 1px); }
+@media (min-width: 900px) {
+  .hero__split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero__brand { padding-block: 64px 96px; }
+  .hero__beans .frame { position: absolute; inset: 0; aspect-ratio: auto; translate: none; }
+  .hero--home .scroll-cue { left: 25%; }
+}
+
+/* ---------- Coffee list under Our coffee ---------- */
+.coffees {
+  display: grid; gap: 0 clamp(24px, 3vw, 48px);
+  margin-top: clamp(72px, 9vw, 128px); border-top: 1px solid var(--ink);
+}
+.coffees__item { display: grid; gap: 10px; align-content: start; padding: 26px 0 30px; border-bottom: 1px solid rgba(21,21,21,.22); }
+.coffees__name { font-size: clamp(1.45rem, 1.15rem + .9vw, 1.9rem); font-weight: 340; letter-spacing: -.018em; line-height: 1.1; }
+.coffees__notes { color: var(--muted-sand); font-size: 1rem; line-height: 1.55; max-width: 26em; }
+@media (min-width: 700px) { .coffees { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) {
+  .coffees { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .coffees__item { border-bottom: 0; padding-top: 30px; }
+  .coffees__item + .coffees__item { border-left: 1px solid rgba(21,21,21,.22); padding-left: clamp(20px, 2vw, 32px); }
+}
