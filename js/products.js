@@ -13,32 +13,44 @@
 */
 window.NFC_PRODUCTS = [
   {
-    id: "single-origin",
-    name: "Single origin roasted Arabica",
+    id: "sunrise-blend",
+    name: "Sunrise Blend",
     brand: "Noosa Coffee Co",
     category: "roasted-coffee",
     enquiry: "Roasted coffee",
-    description: "Single origin roasted Arabica coffee beans, roasted in Noosa.",
+    description: "Delivers a heavy body, thick crema and an intense milk chocolate, dried fruit and hazelnut note.",
     optionLabel: "Size",
-    options: [{ label: "250g" }, { label: "500g" }, { label: "1kg" }],
-    image: "./images/coffee-bags.webp",
-    width: 683,
-    height: 738,
-    alt: "Noosa Coffee Co single origin roasted Arabica coffee beans in a 1kg and a 250g bag, with eucalyptus leaves and roasted beans on a sand backdrop"
+    options: [{ label: "250g" }, { label: "500g" }, { label: "1kg" }]
   },
   {
-    id: "blends",
-    name: "Roasted coffee blends",
+    id: "single-origin-brazilian",
+    name: "Single Origin Brazilian",
     brand: "Noosa Coffee Co",
     category: "roasted-coffee",
     enquiry: "Roasted coffee",
-    description: "Blends of roasted coffee beans, roasted in Noosa.",
+    description: "Offers crisp lemon and orange acidity together with smooth caramel notes, which linger in a nutty finish.",
     optionLabel: "Size",
-    options: [{ label: "250g" }, { label: "500g" }, { label: "1kg" }],
-    image: "./images/roasted-beans-cooling.webp",
-    width: 1200,
-    height: 800,
-    alt: "Freshly roasted coffee beans turning in the cooling tray of a roaster"
+    options: [{ label: "500g" }]
+  },
+  {
+    id: "single-origin-colombian",
+    name: "Single Origin Colombian",
+    brand: "Noosa Coffee Co",
+    category: "roasted-coffee",
+    enquiry: "Roasted coffee",
+    description: "Offers milk chocolate, brown sugar and citrus notes.",
+    optionLabel: "Size",
+    options: [{ label: "500g" }]
+  },
+  {
+    id: "decaf-colombian-tumbaga",
+    name: "Decaf Colombian Tumbaga",
+    brand: "Noosa Coffee Co",
+    category: "roasted-coffee",
+    enquiry: "Roasted coffee",
+    description: "Offers milk chocolate, fruit and caramel notes.",
+    optionLabel: "Size",
+    options: [{ label: "500g" }]
   },
   {
     id: "raw-honey",

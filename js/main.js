@@ -86,8 +86,10 @@
     }).join("");
     var single = p.options.length === 1;
     return (
-      '<article class="card" id="' + esc(p.id) + '" data-product="' + esc(p.id) + '">' +
-        '<div class="card__media frame" data-veil><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>' +
+      '<article class="card' + (p.image ? "" : " card--plain") + '" id="' + esc(p.id) + '" data-product="' + esc(p.id) + '">' +
+        (p.image
+          ? '<div class="card__media frame" data-veil><img src="' + esc(p.image) + '" alt="' + esc(p.alt) + '" width="' + p.width + '" height="' + p.height + '" loading="lazy" decoding="async"></div>'
+          : '<img class="card__badge" src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">') +
         '<div class="card__body" data-stagger>' +
           '<p class="card__brand">' + esc(p.brand) + "</p>" +
           '<h3 class="card__title">' + esc(p.name) + "</h3>" +
@@ -206,8 +208,8 @@
       productSel.value = p.enquiry;
       if (!message.value && p.category === "pantry") {
         message.value = "I'm interested in " + p.name.toLowerCase() + ".";
-      } else if (!message.value && p.id === "blends") {
-        message.value = "I'm interested in your roasted coffee blends.";
+      } else if (!message.value && p.category === "roasted-coffee") {
+        message.value = "I'm interested in " + p.name + (chosen ? " (" + chosen + ")" : "") + ".";
       }
     } else if (pid === "bulk") {
       productSel.value = "Bulk / café order";

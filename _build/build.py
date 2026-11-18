@@ -350,16 +350,12 @@ COFFEE = f"""
         {lines("Roasted coffee", id_="roasted-title", cls="h2 h2--xl")}
         <p class="lede" data-fade>Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
       </div>
-      <div class="cards cards--2" data-products="single-origin,blends">
+      <div class="cards cards--2" data-products="sunrise-blend,single-origin-brazilian,single-origin-colombian,decaf-colombian-tumbaga">
         <noscript><p>See our roasted coffee range, or <a href="./contact.html">send an enquiry</a>.</p></noscript>
       </div>
     </div>
   </section>
 
-  <div class="duo">
-    <div class="duo__a frame" data-veil><img class="parallax-img" src="./images/coffee-cherries.webp" alt="Ripe red coffee cherries hanging among dark green leaves" width="1200" height="1800" loading="lazy" decoding="async"></div>
-    <div class="duo__b frame" data-veil><img class="parallax-img" src="./images/coffee-cherries-branch.webp" alt="Branches of a coffee plant heavy with red and green coffee cherries" width="1600" height="1067" loading="lazy" decoding="async"></div>
-  </div>
 
 {CTA}
 </main>
