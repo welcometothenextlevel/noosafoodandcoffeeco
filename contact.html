@@ -35,12 +35,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&amp;family=Fraunces:opsz,wght,SOFT@9..144,300..500,0..100&amp;display=swap">
-<link rel="stylesheet" href="./css/style.css?v=725750e1">
+<link rel="stylesheet" href="./css/style.css?v=ea1af086">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="loader" aria-hidden="true">
-  <div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div>
+  <div class="loader__disc"><div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div></div>
 </div>
 <div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
@@ -148,9 +148,10 @@
   </section>
 </main>
 <footer class="site-footer on-dark">
+  <div class="footer__band" aria-hidden="true"></div>
   <div class="wrap">
     <div class="footer__grid">
-      <div><img class="footer__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" loading="lazy"></div>
+      <div class="footer__brand"><img class="footer__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" loading="lazy"></div>
       <div class="footer__col">
         <h2>Where we are</h2>
         <p>Noosa Heads,<br>Queensland, Australia</p>
@@ -162,8 +163,8 @@
       <div class="footer__col">
         <h2>Our labels</h2>
         <ul>
-          <li><a href="./coffee.html">Noosa Coffee Co</a></li>
-          <li><a href="./honey.html">Noosa Tropical Farm</a></li>
+          <li><a class="footer__label" href="./coffee.html"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
+          <li><a class="footer__label" href="./honey.html"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
         </ul>
       </div>
     </div>
@@ -178,6 +179,6 @@
 <script src="./js/vendor/gsap.min.js" defer></script>
 <script src="./js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="./js/vendor/lenis.min.js" defer></script>
-<script src="./js/motion.js?v=528fda4e" defer></script>
+<script src="./js/motion.js?v=fad67ee3" defer></script>
 </body>
 </html>

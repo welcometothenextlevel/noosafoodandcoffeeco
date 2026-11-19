@@ -62,12 +62,9 @@ def drips(seed, count=14, max_len=120, band=True):
     return '<div class="drips" aria-hidden="true" data-drips>' + b + "".join(out) + "</div>"
 
 
-SPRIG = (ROOT / "images" / "sprig.svg").read_text()
-import re as _re
-_d = _re.search(r' d="([^"]+)"', SPRIG).group(1)
-_parts = [p for p in _re.split(r"(?=M)", _d) if p.strip()]
-SPRIG_INLINE = _re.sub(r'<path d="[^"]+"/>', "".join(f'<path d="{p}"/>' for p in _parts), SPRIG, count=1)
-SPRIG_INLINE = SPRIG_INLINE.replace("<svg ", '<svg class="cta__sprig" aria-hidden="true" focusable="false" data-draw ', 1)
+# Fern from Nicky's leaf pattern: drawn on scroll, then filled (js/motion.js)
+FERN = (ROOT / "images" / "fern.svg").read_text().strip()
+SPRIG_INLINE = FERN.replace("<svg ", '<svg class="cta__sprig" aria-hidden="true" focusable="false" data-draw ', 1)
 
 
 def head(title, desc, page):
@@ -120,7 +117,7 @@ def header(page):
     return f"""<body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="loader" aria-hidden="true">
-  <div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div>
+  <div class="loader__disc"><div class="loader__mark"><img src="./images/logo-light.svg" alt="" width="550" height="557"></div></div>
 </div>
 <div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
@@ -168,9 +165,10 @@ CTA = f"""
 def footer():
     links = "".join(f'<li><a href="./{href}">{label}</a></li>' for href, label in NAV)
     return f"""<footer class="site-footer on-dark">
+  <div class="footer__band" aria-hidden="true"></div>
   <div class="wrap">
     <div class="footer__grid">
-      <div><img class="footer__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" loading="lazy"></div>
+      <div class="footer__brand"><img class="footer__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" loading="lazy"></div>
       <div class="footer__col">
         <h2>Where we are</h2>
         <p>Noosa Heads,<br>Queensland, Australia</p>
@@ -182,8 +180,8 @@ def footer():
       <div class="footer__col">
         <h2>Our labels</h2>
         <ul>
-          <li><a href="./coffee.html">Noosa Coffee Co</a></li>
-          <li><a href="./honey.html">Noosa Tropical Farm</a></li>
+          <li><a class="footer__label" href="./coffee.html"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
+          <li><a class="footer__label" href="./honey.html"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
         </ul>
       </div>
     </div>
@@ -321,7 +319,7 @@ INDEX = f"""
         <p data-fade><a class="link link--honey" href="./honey.html">See the honey {ARROW}</a></p>
       </div>
       <div class="chapter__media chapter__media--honey">
-        <span class="lid" aria-hidden="true" data-pop></span>
+        <img class="honey-badge honey-badge--chapter" src="./images/noosa-tropical-farm-honey.svg" alt="Noosa Tropical Farm Honey" width="350" height="350" loading="lazy" data-pop>
         <div class="frame frame--honey" data-veil><img src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024" loading="lazy" decoding="async"></div>
         <div class="inset" data-parallax="-.18"><div class="frame" data-veil><img src="./images/honeycomb.webp" alt="Golden honeycomb on a wooden board" width="683" height="670" loading="lazy" decoding="async"></div></div>
       </div>
@@ -384,6 +382,7 @@ HONEY = f"""
       </div>
       <figure class="honey-hero__media" data-intro>
         <div class="frame" data-veil><img class="parallax-img" src="./images/honey.webp" alt="{HONEY_ALT}" width="683" height="1024" fetchpriority="high"></div>
+        <img class="honey-badge honey-badge--hero" src="./images/noosa-tropical-farm-honey.svg" alt="Noosa Tropical Farm Honey" width="350" height="350" data-pop>
       </figure>
     </div>
   </section>

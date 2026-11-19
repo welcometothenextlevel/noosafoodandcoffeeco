@@ -249,9 +249,11 @@
     var tl = gsap.timeline({
       scrollTrigger: { trigger: svg.parentElement, start: "top 85%", end: "bottom 75%", scrub: 1 }
     });
+    gsap.set(paths, { fillOpacity: 0 });
     paths.forEach(function (p, i) {
       tl.to(p, { strokeDashoffset: 0, ease: "none", duration: 1 }, i * (2.2 / paths.length));
     });
+    tl.to(paths, { fillOpacity: 1, ease: "none", duration: 0.8 }, 2.6);
   });
 
   /* ---------- Size silhouettes rise from their shelf ---------- */
