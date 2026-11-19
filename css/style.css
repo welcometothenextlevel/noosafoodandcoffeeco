@@ -108,7 +108,7 @@ html.pre-intro [data-intro] { opacity: 0; animation: nfc-show .01s linear 2.6s f
   background: var(--ink) var(--pattern) 50% 50% / cover;
   visibility: hidden;
 }
-html.has-loader .loader { visibility: visible; animation: nfc-hide .01s linear 3.2s forwards; }
+html.has-loader .loader { visibility: visible; animation: nfc-hide .01s linear 3.9s forwards; }
 @keyframes nfc-hide { to { visibility: hidden; opacity: 0; } }
 .loader__mark { width: clamp(120px, 14vw, 180px); overflow: hidden; }
 .loader__mark img { width: 100%; }

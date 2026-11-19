@@ -122,10 +122,10 @@
     gsap.set(mark, { y: 0, yPercent: 105 });
     master
       .to(mark, { yPercent: 0, duration: 1.1, ease: "expo.out" }, 0.15)
-      .to(mark, { yPercent: -105, duration: 0.7, ease: "expo.in" }, 1.55)
-      .to(loader, { yPercent: -100, duration: 1.05, ease: "expo.inOut" }, 1.95)
+      .to(mark, { yPercent: -105, duration: 0.7, ease: "expo.in" }, 2.4)
+      .to(loader, { yPercent: -100, duration: 1.05, ease: "expo.inOut" }, 2.8)
       .set(loader, { visibility: "hidden" })
-      .add(function () { intro.play(); }, 2.35);
+      .add(function () { intro.play(); }, 3.2);
     try { sessionStorage.setItem("nfc-seen", "1"); } catch (e) {}
   } else if (entering && curtain && !late) {
     gsap.set(curtain, { y: 0, yPercent: 0 });
