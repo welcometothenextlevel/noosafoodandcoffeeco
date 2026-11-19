@@ -310,7 +310,7 @@ INDEX = f"""
       <div class="chapter__body">
         <p class="label" data-fade>Noosa Tropical Farm</p>
         {lines("Our honey", id_="honey-title", cls="h2 h2--xl")}
-        <p data-fade>Pure raw honey in 500g, 1kg, 3kg and 30kg. And honeycomb, packed in 250g tubs.</p>
+        <p data-fade>Pure raw honey in 500g, 1kg, 3kg and 30kg. Also honeycomb, packed in 250g tubs.</p>
         <ul class="nothing" data-stagger>
           <li>{NO_ICON}No preservatives</li>
           <li>{NO_ICON}No colourings</li>
@@ -374,7 +374,7 @@ HONEY = f"""
       <div class="honey-hero__text">
         <p class="label" data-intro data-fade>Noosa Tropical Farm</p>
         {lines("Pure raw honey,", "with nothing added", tag="h1", cls="h1", id_="page-title", intro=True)}
-        <p class="lede" data-intro data-fade>Raw honey from Noosa Tropical Farm, in 500g, 1kg, 3kg and 30kg. And honeycomb, packed in 250g tubs.</p>
+        <p class="lede" data-intro data-fade>Raw honey from Noosa Tropical Farm, in 500g, 1kg, 3kg and 30kg. Also honeycomb, packed in 250g tubs.</p>
         <div class="actions" data-intro data-fade>
           <a class="btn btn--honey" href="./contact.html?product=raw-honey"><span>Enquire about honey</span> {ARROW}</a>
           <a class="btn btn--light-line" href="#raw-honey"><span>See sizes</span></a>
