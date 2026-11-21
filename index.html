@@ -24,6 +24,10 @@
 <script>
 (function (h) {
   h.classList.add("js");
+  // Old links to /coffee.html etc: show the clean URL in the address bar
+  if (/\.html$/.test(location.pathname) && history.replaceState) {
+    history.replaceState(null, "", location.pathname.replace(/(index)?\.html$/, "") + location.search + location.hash);
+  }
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   h.classList.add("pre-intro");
   try {
@@ -45,12 +49,12 @@
 <div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="./index.html" aria-label="Noosa Food &amp; Coffee Co, home">
+    <a class="brand" href="./" aria-label="Noosa Food &amp; Coffee Co, home">
       <img src="./images/logo-light.svg" alt="" width="550" height="557">
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="./index.html" aria-current="page">Home</a><a href="./coffee.html">Coffee</a><a href="./honey.html">Honey</a><a href="./contact.html">Contact</a>
-      <a class="btn btn--light-line btn--sm" href="./contact.html"><span>Enquire</span></a>
+      <a href="./" aria-current="page">Home</a><a href="./coffee">Coffee</a><a href="./honey">Honey</a><a href="./contact">Contact</a>
+      <a class="btn btn--light-line btn--sm" href="./contact"><span>Enquire</span></a>
     </nav>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
       <span class="menu-toggle__label">Menu</span><span class="menu-toggle__icon" aria-hidden="true"></span>
@@ -59,10 +63,10 @@
 </header>
 <div class="mobile-menu" id="mobile-menu">
   <nav aria-label="Mobile">
-    <ul><li><a href="./index.html" aria-current="page">Home</a></li><li><a href="./coffee.html">Coffee</a></li><li><a href="./honey.html">Honey</a></li><li><a href="./contact.html">Contact</a></li></ul>
+    <ul><li><a href="./" aria-current="page">Home</a></li><li><a href="./coffee">Coffee</a></li><li><a href="./honey">Honey</a></li><li><a href="./contact">Contact</a></li></ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--light" href="./contact.html"><span>Contact us</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+    <a class="btn btn--light" href="./contact"><span>Contact us</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
     <p>Noosa Heads, Queensland, Australia</p>
   </div>
 </div>
@@ -77,8 +81,8 @@
     <div class="hero__center">
       <img class="hero__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" data-intro data-fade>
       <div class="actions hero__actions" data-intro data-fade>
-        <a class="btn btn--light btn--lg" href="./coffee.html"><span>Our Coffee</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
-        <a class="btn btn--light-line btn--lg" href="./honey.html"><span>Our Honey</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        <a class="btn btn--light btn--lg" href="./coffee"><span>Our Coffee</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        <a class="btn btn--light-line btn--lg" href="./honey"><span>Our Honey</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
       </div>
     </div>
     <a class="scroll-cue" href="#coffee-title" data-intro data-fade><span>Scroll</span><i aria-hidden="true"></i></a>
@@ -94,7 +98,7 @@
             <h2 class="h2 h2--xl" id="coffee-title" data-lines><span class="ln"><span class="ln__in">Our coffee</span></span></h2>
           </div>
         </div>
-        <p data-fade><a class="link" href="./coffee.html">See the coffee <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></p>
+        <p data-fade><a class="link" href="./coffee">See the coffee <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></p>
       </div>
       <ul class="coffees" data-stagger><li class="coffees__item"><h3 class="coffees__name">Sunrise Blend</h3><p class="coffees__notes">Delivers a heavy body, thick crema and an intense milk chocolate, dried fruit and hazelnut note.</p></li><li class="coffees__item"><h3 class="coffees__name">Single Origin Brazilian</h3><p class="coffees__notes">Offers crisp lemon and orange acidity together with smooth caramel notes, which linger in a nutty finish.</p></li><li class="coffees__item"><h3 class="coffees__name">Single Origin Colombian</h3><p class="coffees__notes">Offers milk chocolate, brown sugar and citrus notes.</p></li><li class="coffees__item"><h3 class="coffees__name">Decaf Colombian Tumbaga</h3><p class="coffees__notes">Offers milk chocolate, fruit and caramel notes.</p></li></ul>
     </div>
@@ -112,7 +116,7 @@
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.5"/></svg>No colourings</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.5"/></svg>No additives</li>
         </ul>
-        <p data-fade><a class="link link--honey" href="./honey.html">See the honey <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></p>
+        <p data-fade><a class="link link--honey" href="./honey">See the honey <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></p>
       </div>
       <div class="chapter__media chapter__media--honey">
         <img class="honey-badge honey-badge--chapter" src="./images/noosa-tropical-farm-honey.svg" alt="Noosa Tropical Farm Honey" width="350" height="350" loading="lazy" data-pop>
@@ -135,7 +139,7 @@
       <p class="cta__text" data-fade>Questions, orders or bulk enquiries. Send us a message and we&rsquo;ll get back to you.</p>
     </div>
     <div data-fade>
-      <a class="btn btn--lg" href="./contact.html"><span>Contact us</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+      <a class="btn btn--lg" href="./contact"><span>Contact us</span> <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
     </div>
   </div>
 </section>
@@ -152,13 +156,13 @@
       </div>
       <div class="footer__col">
         <h2>Pages</h2>
-        <ul><li><a href="./index.html">Home</a></li><li><a href="./coffee.html">Coffee</a></li><li><a href="./honey.html">Honey</a></li><li><a href="./contact.html">Contact</a></li></ul>
+        <ul><li><a href="./">Home</a></li><li><a href="./coffee">Coffee</a></li><li><a href="./honey">Honey</a></li><li><a href="./contact">Contact</a></li></ul>
       </div>
       <div class="footer__col">
         <h2>Our labels</h2>
         <ul>
-          <li><a class="footer__label" href="./coffee.html"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
-          <li><a class="footer__label" href="./honey.html"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
+          <li><a class="footer__label" href="./coffee"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
+          <li><a class="footer__label" href="./honey"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
         </ul>
       </div>
     </div>
@@ -169,10 +173,10 @@
   </div>
 </footer>
 <script src="./js/products.js?v=b12836f8"></script>
-<script src="./js/main.js?v=0aae358d"></script>
+<script src="./js/main.js?v=d6ef26b3"></script>
 <script src="./js/vendor/gsap.min.js" defer></script>
 <script src="./js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="./js/vendor/lenis.min.js" defer></script>
-<script src="./js/motion.js?v=ba274826" defer></script>
+<script src="./js/motion.js?v=d6da3917" defer></script>
 </body>
 </html>

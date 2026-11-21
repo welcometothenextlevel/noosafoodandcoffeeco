@@ -307,7 +307,7 @@
       var url;
       try { url = new URL(a.getAttribute("href"), location.href); } catch (err) { return; }
       if (url.origin !== location.origin) return;
-      if (!/(\.html|\/)$/.test(url.pathname)) return;
+      if (!/(\.html|\/[^.\/]*)$/.test(url.pathname)) return; // pages, not files
       if (url.pathname === location.pathname && url.search === location.search) return; // same page / anchor
       e.preventDefault();
       try { sessionStorage.setItem("nfc-t", "1"); } catch (err) {}

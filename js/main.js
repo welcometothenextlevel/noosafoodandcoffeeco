@@ -75,7 +75,7 @@
   function enquiryHref(p, option) {
     var q = "?product=" + encodeURIComponent(p.id);
     if (option) q += "&size=" + encodeURIComponent(option);
-    return "./contact.html" + q;
+    return "./contact" + q;
   }
 
   function renderCard(p) {
@@ -239,7 +239,7 @@
 
       // Until the Formspree ID is added, the form runs in preview mode.
       if (form.action.indexOf("REPLACE_ME") !== -1) {
-        console.warn("Formspree ID missing: enquiries are not being sent. Replace REPLACE_ME in contact.html.");
+        console.warn("Formspree ID missing: enquiries are not being sent. Replace REPLACE_ME in _build/build.py.");
         window.setTimeout(done, 500);
         return;
       }

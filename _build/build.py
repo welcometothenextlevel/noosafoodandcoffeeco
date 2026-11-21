@@ -33,6 +33,11 @@ def ver(rel):
     return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
 
 
+def clean(page):
+    """Public URL path for a page file: index.html -> "", coffee.html -> "coffee"."""
+    return "" if page == "index.html" else page[:-5]
+
+
 NAV = [("index.html", "Home"), ("coffee.html", "Coffee"), ("honey.html", "Honey"), ("contact.html", "Contact")]
 
 
@@ -68,7 +73,7 @@ SPRIG_INLINE = FERN.replace("<svg ", '<svg class="cta__sprig" aria-hidden="true"
 
 
 def head(title, desc, page):
-    url = SITE + ("" if page == "index.html" else page)
+    url = SITE + clean(page)
     return f"""<!doctype html>
 <html lang="en-AU">
 <head>
@@ -95,6 +100,10 @@ def head(title, desc, page):
 <script>
 (function (h) {{
   h.classList.add("js");
+  // Old links to /coffee.html etc: show the clean URL in the address bar
+  if (/\.html$/.test(location.pathname) && history.replaceState) {{
+    history.replaceState(null, "", location.pathname.replace(/(index)?\.html$/, "") + location.search + location.hash);
+  }}
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   h.classList.add("pre-intro");
   try {{
@@ -112,8 +121,8 @@ def head(title, desc, page):
 
 
 def header(page):
-    links = "".join(f'<a href="./{href}"{CUR if href == page else ""}>{label}</a>' for href, label in NAV)
-    mlinks = "".join(f'<li><a href="./{href}"{CUR if href == page else ""}>{label}</a></li>' for href, label in NAV)
+    links = "".join(f'<a href="./{clean(href)}"{CUR if href == page else ""}>{label}</a>' for href, label in NAV)
+    mlinks = "".join(f'<li><a href="./{clean(href)}"{CUR if href == page else ""}>{label}</a></li>' for href, label in NAV)
     return f"""<body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="loader" aria-hidden="true">
@@ -122,12 +131,12 @@ def header(page):
 <div class="curtain" aria-hidden="true"></div>
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="./index.html" aria-label="Noosa Food &amp; Coffee Co, home">
+    <a class="brand" href="./" aria-label="Noosa Food &amp; Coffee Co, home">
       <img src="./images/logo-light.svg" alt="" width="550" height="557">
     </a>
     <nav class="nav" aria-label="Main">
       {links}
-      <a class="btn btn--light-line btn--sm" href="./contact.html"><span>Enquire</span></a>
+      <a class="btn btn--light-line btn--sm" href="./contact"><span>Enquire</span></a>
     </nav>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
       <span class="menu-toggle__label">Menu</span><span class="menu-toggle__icon" aria-hidden="true"></span>
@@ -139,7 +148,7 @@ def header(page):
     <ul>{mlinks}</ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--light" href="./contact.html"><span>Contact us</span> {ARROW}</a>
+    <a class="btn btn--light" href="./contact"><span>Contact us</span> {ARROW}</a>
     <p>Noosa Heads, Queensland, Australia</p>
   </div>
 </div>
@@ -155,7 +164,7 @@ CTA = f"""
       <p class="cta__text" data-fade>Questions, orders or bulk enquiries. Send us a message and we&rsquo;ll get back to you.</p>
     </div>
     <div data-fade>
-      <a class="btn btn--lg" href="./contact.html"><span>Contact us</span> {ARROW}</a>
+      <a class="btn btn--lg" href="./contact"><span>Contact us</span> {ARROW}</a>
     </div>
   </div>
 </section>
@@ -163,7 +172,7 @@ CTA = f"""
 
 
 def footer():
-    links = "".join(f'<li><a href="./{href}">{label}</a></li>' for href, label in NAV)
+    links = "".join(f'<li><a href="./{clean(href)}">{label}</a></li>' for href, label in NAV)
     return f"""<footer class="site-footer on-dark">
   <div class="footer__band" aria-hidden="true"></div>
   <div class="wrap">
@@ -180,8 +189,8 @@ def footer():
       <div class="footer__col">
         <h2>Our labels</h2>
         <ul>
-          <li><a class="footer__label" href="./coffee.html"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
-          <li><a class="footer__label" href="./honey.html"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
+          <li><a class="footer__label" href="./coffee"><img src="./images/noosa-coffee-co.svg" alt="" width="350" height="350" loading="lazy">Noosa Coffee Co</a></li>
+          <li><a class="footer__label" href="./honey"><img src="./images/noosa-tropical-farm-honey.svg" alt="" width="350" height="350" loading="lazy">Noosa Tropical Farm</a></li>
         </ul>
       </div>
     </div>
@@ -281,8 +290,8 @@ INDEX = f"""
     <div class="hero__center">
       <img class="hero__logo" src="./images/logo-light.svg" alt="Noosa Food &amp; Coffee Co" width="550" height="557" data-intro data-fade>
       <div class="actions hero__actions" data-intro data-fade>
-        <a class="btn btn--light btn--lg" href="./coffee.html"><span>Our Coffee</span> {ARROW}</a>
-        <a class="btn btn--light-line btn--lg" href="./honey.html"><span>Our Honey</span> {ARROW}</a>
+        <a class="btn btn--light btn--lg" href="./coffee"><span>Our Coffee</span> {ARROW}</a>
+        <a class="btn btn--light-line btn--lg" href="./honey"><span>Our Honey</span> {ARROW}</a>
       </div>
     </div>
     <a class="scroll-cue" href="#coffee-title" data-intro data-fade><span>Scroll</span><i aria-hidden="true"></i></a>
@@ -298,7 +307,7 @@ INDEX = f"""
             {lines("Our coffee", id_="coffee-title", cls="h2 h2--xl")}
           </div>
         </div>
-        <p data-fade><a class="link" href="./coffee.html">See the coffee {ARROW}</a></p>
+        <p data-fade><a class="link" href="./coffee">See the coffee {ARROW}</a></p>
       </div>
       <ul class="coffees" data-stagger>{COFFEE_LIST}</ul>
     </div>
@@ -316,7 +325,7 @@ INDEX = f"""
           <li>{NO_ICON}No colourings</li>
           <li>{NO_ICON}No additives</li>
         </ul>
-        <p data-fade><a class="link link--honey" href="./honey.html">See the honey {ARROW}</a></p>
+        <p data-fade><a class="link link--honey" href="./honey">See the honey {ARROW}</a></p>
       </div>
       <div class="chapter__media chapter__media--honey">
         <img class="honey-badge honey-badge--chapter" src="./images/noosa-tropical-farm-honey.svg" alt="Noosa Tropical Farm Honey" width="350" height="350" loading="lazy" data-pop>
@@ -357,7 +366,7 @@ COFFEE = f"""
         <p class="lede" data-fade>Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
       </div>
       <div class="cards cards--2" data-products="sunrise-blend,single-origin-brazilian,single-origin-colombian,decaf-colombian-tumbaga">
-        <noscript><p>See our roasted coffee range, or <a href="./contact.html">send an enquiry</a>.</p></noscript>
+        <noscript><p>See our roasted coffee range, or <a href="./contact">send an enquiry</a>.</p></noscript>
       </div>
     </div>
   </section>
@@ -376,7 +385,7 @@ HONEY = f"""
         {lines("Pure raw honey,", "with nothing added", tag="h1", cls="h1", id_="page-title", intro=True)}
         <p class="lede" data-intro data-fade>Raw honey from Noosa Tropical Farm, in 500g, 1kg, 3kg and 30kg. Also honeycomb, packed in 250g tubs.</p>
         <div class="actions" data-intro data-fade>
-          <a class="btn btn--honey" href="./contact.html?product=raw-honey"><span>Enquire about honey</span> {ARROW}</a>
+          <a class="btn btn--honey" href="./contact?product=raw-honey"><span>Enquire about honey</span> {ARROW}</a>
           <a class="btn btn--light-line" href="#raw-honey"><span>See sizes</span></a>
         </div>
       </div>
@@ -406,7 +415,7 @@ HONEY = f"""
         <p class="lede" data-fade>Choose a size and send us an enquiry. We&rsquo;ll reply with price and availability.</p>
       </div>
       <div class="cards cards--2 cards--honey" data-products="raw-honey,honeycomb">
-        <noscript><p>Raw honey in 500g, 1kg, 3kg and 30kg; honeycomb in 250g tubs. <a href="./contact.html">Send an enquiry</a>.</p></noscript>
+        <noscript><p>Raw honey in 500g, 1kg, 3kg and 30kg; honeycomb in 250g tubs. <a href="./contact">Send an enquiry</a>.</p></noscript>
       </div>
     </div>
   </section>
@@ -489,7 +498,7 @@ CONTACT = f"""
           <span class="success__tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span>
           <h2 class="h3">Thanks, your message is on its way.</h2>
           <p>We&rsquo;ve got your enquiry and we&rsquo;ll get back to you by email.</p>
-          <p><a class="link" href="./index.html" style="color:var(--paper)">Back to the home page {ARROW}</a></p>
+          <p><a class="link" href="./" style="color:var(--paper)">Back to the home page {ARROW}</a></p>
         </div>
       </div>
     </div>
