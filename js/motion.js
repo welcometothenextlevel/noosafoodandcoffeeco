@@ -126,7 +126,17 @@
       .to(loader, { yPercent: -100, duration: 1.05, ease: "expo.inOut" }, 2.8)
       .set(loader, { visibility: "hidden" })
       .add(function () { intro.play(); }, 3.2);
-    try { sessionStorage.setItem("nfc-seen", "1"); } catch (e) {}
+  } else if (hadLoader && loader && performance.now() < 3600) {
+    // Slow connection: the CSS has been showing the logo screen while this script loaded.
+    // Finish it from here instead of cutting straight to the page.
+    var lateMark = loader.querySelector(".loader__mark img");
+    gsap.set(loader, { visibility: "visible", y: 0, yPercent: 0 });
+    intro.progress(1);
+    var hold = Math.max(0, 2.4 - performance.now() / 1000);
+    master
+      .to(lateMark, { yPercent: -105, duration: 0.7, ease: "expo.in" }, hold)
+      .to(loader, { yPercent: -100, duration: 1.05, ease: "expo.inOut" }, hold + 0.4)
+      .set(loader, { visibility: "hidden" });
   } else if (entering && curtain && !late) {
     gsap.set(curtain, { y: 0, yPercent: 0 });
     master
@@ -137,7 +147,6 @@
     if (loader) gsap.set(loader, { visibility: "hidden" });
     if (curtain) gsap.set(curtain, { y: 0, yPercent: 100 });
     if (late) intro.progress(1); else master.add(function () { intro.play(); }, 0.05);
-    try { sessionStorage.setItem("nfc-seen", "1"); } catch (e) {}
   }
   release();
 
@@ -300,6 +309,7 @@
 
   /* ---------- Page transitions ---------- */
   if (curtain) {
+    var leaveTimer = null;
     document.addEventListener("click", function (e) {
       var a = e.target.closest("a");
       if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -311,12 +321,22 @@
       if (url.pathname === location.pathname && url.search === location.search) return; // same page / anchor
       e.preventDefault();
       try { sessionStorage.setItem("nfc-t", "1"); } catch (err) {}
-      var go = function () { window.location.href = url.href; };
+      // Navigate once. The timer is only a fallback; clear it so it can't fire again
+      // when the browser restores this page from the back/forward cache.
+      var went = false;
+      var go = function () {
+        if (went) return;
+        went = true;
+        window.clearTimeout(leaveTimer);
+        window.location.href = url.href;
+      };
       gsap.fromTo(curtain, { y: 0, yPercent: 100 }, { yPercent: 0, duration: 0.7, ease: "expo.inOut", onComplete: go });
-      window.setTimeout(go, 1300);
+      leaveTimer = window.setTimeout(go, 1300);
     });
     window.addEventListener("pageshow", function (e) {
-      if (e.persisted) gsap.set(curtain, { y: 0, yPercent: 100 });
+      if (!e.persisted) return;
+      window.clearTimeout(leaveTimer);
+      gsap.set(curtain, { y: 0, yPercent: 100 });
     });
   }
 

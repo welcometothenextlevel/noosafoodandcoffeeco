@@ -106,10 +106,17 @@ def head(title, desc, page):
   }}
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   h.classList.add("pre-intro");
+  // Internal link: the curtain. Any other arrival (link, typed URL, reload): the logo intro.
+  // Back/forward skips it.
+  var entering = false, back = false;
   try {{
-    if (sessionStorage.getItem("nfc-t") === "1") {{ h.classList.add("is-entering"); sessionStorage.removeItem("nfc-t"); }}
-    else if (!sessionStorage.getItem("nfc-seen")) {{ h.classList.add("has-loader"); }}
+    entering = sessionStorage.getItem("nfc-t") === "1";
+    sessionStorage.removeItem("nfc-t");
+    var nav = performance.getEntriesByType("navigation")[0];
+    back = !!nav && nav.type === "back_forward";
   }} catch (e) {{}}
+  if (entering) h.classList.add("is-entering");
+  else if (!back) h.classList.add("has-loader");
 }})(document.documentElement);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
