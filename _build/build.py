@@ -26,6 +26,7 @@ SITE = "https://noosafoodandcoffeeco.com.au/"
 ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
 CUR = ' aria-current="page"'
 import hashlib
+import json
 
 
 def ver(rel):
@@ -72,16 +73,41 @@ FERN = (ROOT / "images" / "fern.svg").read_text().strip()
 SPRIG_INLINE = FERN.replace("<svg ", '<svg class="cta__sprig" aria-hidden="true" focusable="false" data-draw ', 1)
 
 
+NAMES = {"index.html": "Home", "coffee.html": "Coffee", "honey.html": "Honey", "contact.html": "Contact"}
+
+
+def schema(page):
+    """Structured data: who the business is (every page) and where the page sits (breadcrumbs)."""
+    org = {
+        "@type": "Organization", "@id": SITE + "#org",
+        "name": "Noosa Food & Coffee Co", "url": SITE,
+        "logo": SITE + "images/og-image.jpg",
+        "description": "Coffee roasted in Noosa by Noosa Coffee Co, and pure raw honey and honeycomb from Noosa Tropical Farm.",
+        "address": {"@type": "PostalAddress", "addressLocality": "Noosa Heads", "addressRegion": "QLD", "addressCountry": "AU"},
+        "areaServed": "AU",
+        "brand": [{"@type": "Brand", "name": "Noosa Coffee Co"}, {"@type": "Brand", "name": "Noosa Tropical Farm"}],
+    }
+    graph = [org, {"@type": "WebSite", "@id": SITE + "#site", "name": "Noosa Food & Coffee Co", "url": SITE, "publisher": {"@id": SITE + "#org"}}]
+    if page != "index.html":
+        graph.append({"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+            {"@type": "ListItem", "position": 2, "name": NAMES[page], "item": SITE + clean(page)}]})
+    return '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False) + "</script>"
+
+
 def head(title, desc, page):
     url = SITE + clean(page)
+    missing = page == "404.html"
+    extra = '<base href="/">\n<meta name="robots" content="noindex">' if missing else schema(page)
     return f"""<!doctype html>
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
+{extra}
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="{url}">
+{"" if missing else f'<link rel="canonical" href="{url}">'}
 <meta name="theme-color" content="#151515">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Noosa Food &amp; Coffee Co">
@@ -522,6 +548,27 @@ PAGES = {
                      "Questions, orders or bulk and café enquiries for roasted coffee, raw honey and honeycomb. Noosa Heads, Queensland, Australia.",
                      CONTACT),
 }
+
+NOT_FOUND = f"""
+<main id="main">
+  <section class="contact" aria-labelledby="page-title">
+    <div class="wrap">
+      {lines("Page not found", tag="h1", cls="h1", id_="page-title", intro=True)}
+      <p class="lede" data-intro data-fade>That page doesn&rsquo;t exist, or it has moved.</p>
+      <p data-intro data-fade><a class="btn btn--lg" href="./"><span>Back to the home page</span> {ARROW}</a></p>
+    </div>
+  </section>
+</main>
+"""
+PAGES["404.html"] = ("Page not found | Noosa Food &amp; Coffee Co", "This page doesn&rsquo;t exist.", NOT_FOUND)
+
+import datetime
+today = datetime.date.today().isoformat()
+(ROOT / "sitemap.xml").write_text(
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "".join(f"  <url><loc>{SITE + clean(pg)}</loc><lastmod>{today}</lastmod></url>\n" for pg in NAMES)
+    + "</urlset>\n", encoding="utf-8")
+(ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8")
 
 for page, (title, desc, body) in PAGES.items():
     html = head(title, desc, page) + header(page) + body + footer()
